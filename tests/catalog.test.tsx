@@ -93,4 +93,30 @@ describe("catalog list (/catalog)", () => {
 		expect(screen.getByRole("heading", { name: "1984" })).toBeInTheDocument()
 		expect(screen.queryByRole("heading", { name: "Clean Code" })).not.toBeInTheDocument()
 	})
+
+	it("filters the list by isbn via the finder", async () => {
+		const all = [
+			makeBook({ title: "Clean Code", isbn: "978-0132350884" }),
+			makeBook({ title: "Dune", isbn: "978-0441013593" }),
+		]
+		server.use(
+			http.get(BOOKS_URL, ({ request }) => {
+				const isbn = new URL(request.url).searchParams.get("isbn")
+				const filtered = isbn ? all.filter((book) => book.isbn === isbn) : all
+				return HttpResponse.json(makeBookList(filtered))
+			}),
+		)
+
+		renderRoute("/catalog")
+		expect(await screen.findByRole("heading", { name: "Clean Code" })).toBeInTheDocument()
+		expect(screen.getAllByRole("article")).toHaveLength(2)
+
+		fireEvent.change(screen.getByRole("textbox", { name: "ISBN" }), {
+			target: { value: "978-0441013593" },
+		})
+
+		expect(await screen.findByText("1 book")).toBeInTheDocument()
+		expect(screen.getByRole("heading", { name: "Dune" })).toBeInTheDocument()
+		expect(screen.queryByRole("heading", { name: "Clean Code" })).not.toBeInTheDocument()
+	})
 })

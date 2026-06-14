@@ -16,13 +16,12 @@ export default defineConfig({
 			use: { ...devices["Desktop Chrome"] },
 		},
 	],
-	// Start the real backend gateway (build it first if the binary is absent),
-	// then Vite which proxies /api → the gateway. The gateway serves an in-memory
-	// seeded catalogue, so no database needs provisioning.
+	// Start the real backend gateway (which provisions a throwaway, freshly-seeded
+	// Postgres in Docker — the gateway requires a DB and auto-migrates/seeds), then
+	// Vite which proxies /api → the gateway.
 	webServer: [
 		{
-			command:
-				"sh -lc 'cd ../library-backend && (test -x target/debug/gateway || cargo build -p gateway) && exec target/debug/gateway'",
+			command: "sh scripts/start-gateway.sh",
 			url: "http://localhost:8080/healthz",
 			reuseExistingServer: !process.env.CI,
 			timeout: 180_000,
