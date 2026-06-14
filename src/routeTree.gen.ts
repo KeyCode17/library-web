@@ -16,6 +16,7 @@ import { Route as BooksIdRouteImport } from './routes/books/$id'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as AuthenticatedLoansIndexRouteImport } from './routes/_authenticated/loans/index'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -51,6 +52,11 @@ const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedLoansIndexRoute = AuthenticatedLoansIndexRouteImport.update({
+  id: '/loans/',
+  path: '/loans/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/books/$id': typeof BooksIdRoute
   '/catalog/': typeof CatalogIndexRoute
+  '/loans/': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/books/$id': typeof BooksIdRoute
   '/catalog': typeof CatalogIndexRoute
+  '/loans': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/books/$id': typeof BooksIdRoute
   '/catalog/': typeof CatalogIndexRoute
+  '/_authenticated/loans/': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/books/$id'
     | '/catalog/'
+    | '/loans/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/books/$id'
     | '/catalog'
+    | '/loans'
   id:
     | '__root__'
     | '/'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/books/$id'
     | '/catalog/'
+    | '/_authenticated/loans/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -166,15 +178,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/loans/': {
+      id: '/_authenticated/loans/'
+      path: '/loans'
+      fullPath: '/loans/'
+      preLoaderRoute: typeof AuthenticatedLoansIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedLoansIndexRoute: typeof AuthenticatedLoansIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedLoansIndexRoute: AuthenticatedLoansIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
