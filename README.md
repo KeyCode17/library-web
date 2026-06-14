@@ -9,8 +9,8 @@ contract at `../library-backend/contract/openapi.yaml`, consumed via
 ## What's built
 
 The M0 toolchain skeleton, the **catalog list** (T-001), the **book detail +
-shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004), and
-**recommendations** (T-005) against the contract:
+shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004),
+**recommendations** (T-005), and **group chat** (T-006) against the contract:
 
 - Vite + TanStack Router (file-based) SPA, React 19
 - `/` redirects to `/catalog`, which lists books in a card grid (design:
@@ -38,13 +38,21 @@ shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004), and
   rendered in rank order; states idle/loading/empty/error/loaded. **No recommend design
   exists — clean default, needs a design pass.** (Android consumes the same recommender
   via the on-device FFI binding instead — not the web's concern.)
+- **Group chat** (guarded): a room picker (`/chat`) — ask-a-librarian + a room per book
+  category — and a room view (`/chat/$room`) that loads REST history
+  (`GET /chat/rooms/{room}/messages`) and opens a **WebSocket**
+  (`/ws/chat?room=&token=<jwt>`) for live messages; send `ChatSend`, append incoming
+  `ChatMessage` broadcasts, with a connection-status indicator. **The socket lifecycle is
+  managed outside React** (a TanStack Store service connected/closed from route loaders,
+  subscribed via `useStore`) — no `useEffect`/`useRef`. **No chat design exists — clean
+  default, needs a design pass.**
 - Real types generated from the contract (`pnpm gen:api` → `src/libs/api/schema.d.ts`);
   `useListBooks` / `useBook` / `useLogin` / `useRegister` / `useSession` / `useBorrowBook`
-  / `useListLoans` / `useReturnLoan` / `useApproveLoan` / `useRecommend` (TanStack Query +
-  Store + Form) over a typed `openapi-fetch` client, no React hooks
+  / `useListLoans` / `useReturnLoan` / `useApproveLoan` / `useRecommend` / `useChatHistory`
+  (TanStack Query + Store + Form) over a typed `openapi-fetch` client, no React hooks
 - Test stack: Vitest + Testing Library + MSW (every state, finder, auth, lending + role
-  gating, ranked recommendations), Playwright E2E (list → detail; auth flow; borrow →
-  my-loans → return; recommend)
+  gating, ranked recommendations, chat over a **fake WebSocket**), Playwright E2E (list →
+  detail; auth flow; borrow → my-loans → return; recommend; chat send/receive over a live WS)
 - Biome (tabs, double quotes, semicolons as-needed) with the no-React-hooks lint gate
 - Lefthook pre-commit + pre-push hooks (full gate: biome, tsc, contract-drift, vitest, e2e)
 
