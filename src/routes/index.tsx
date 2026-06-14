@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { AppShell } from "#/components/layout/app-shell.tsx"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 
+// The catalog is the app's primary screen; send the root to it.
 export const Route = createFileRoute("/")({
-	component: AppShell,
+	beforeLoad: () => {
+		throw redirect({ to: "/catalog" })
+	},
 })
