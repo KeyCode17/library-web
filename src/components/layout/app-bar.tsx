@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router"
 import { cn } from "#/libs/clsx/index.ts"
 import { AuthMenu } from "./auth-menu.tsx"
 
@@ -41,7 +42,9 @@ export function AppBar({ showNav = true }: IAppBarProps) {
 				<nav>
 					<span className="on">Catalog</span>
 					<span>Borrowed</span>
-					<span>Chat</span>
+					<Link to="/recommend" className="appbar-link">
+						Recommend
+					</Link>
 				</nav>
 			)}
 			<AuthMenu />

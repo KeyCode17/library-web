@@ -1,18 +1,18 @@
 import { Link } from "@tanstack/react-router"
-import { AvailabilityBadge } from "#/components/features/books/availability-badge.tsx"
-import { BookCover } from "#/components/features/books/book-cover.tsx"
-import { coverColor } from "#/components/features/books/cover-color.ts"
-import { ShelfTab } from "#/components/features/books/shelf-tab.tsx"
-import type { TBook } from "#/routes/catalog/_apis/index.ts"
+import type { TBook } from "#/libs/api/books.ts"
+import { AvailabilityBadge } from "./availability-badge.tsx"
+import { BookCover } from "./book-cover.tsx"
+import { coverColor } from "./cover-color.ts"
+import { ShelfTab } from "./shelf-tab.tsx"
 
 interface IBookCardProps {
 	book: TBook
 }
 
-// A single catalog card (design `.book-card`): cover, title, author, an
-// availability/call-number meta row, and the shelf-location tab. The whole card
-// links to the book's detail route. The contract has no call number, so the ISBN
-// fills the mono `.call` slot.
+// A single book card (design `.book-card`): cover, title, author, an availability/
+// call-number meta row, and the shelf-location tab. The whole card links to the
+// book's detail route. Shared by the catalogue list and the recommendations view.
+// The contract has no call number, so the ISBN fills the mono `.call` slot.
 export function BookCard({ book }: IBookCardProps) {
 	return (
 		<article className="book-card">

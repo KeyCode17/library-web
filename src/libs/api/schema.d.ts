@@ -196,6 +196,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/recommend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rank books for a user's preferences
+         * @description Public. Ranks candidate books for the given preferences using the shared decision-tree recommender — the same logic the mobile app runs on-device via the UniFFI binding. Supply `candidates` to rank a specific set, or omit it to rank the server's catalog. No authentication: preferences come from the body, not from stored user data.
+         */
+        post: operations["recommend"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -307,6 +327,29 @@ export interface components {
         LoanList: {
             data: components["schemas"]["Loan"][];
             pagination: components["schemas"]["Pagination"];
+        };
+        /** @description What the user likes. Empty arrays mean no preference on that axis. */
+        Preferences: {
+            preferred_shelves?: string[];
+            preferred_authors?: string[];
+            /** @default false */
+            available_only: boolean;
+        };
+        RecommendCandidate: {
+            /** Format: uuid */
+            id: string;
+            shelf: string;
+            author: string;
+            available: boolean;
+        };
+        RecommendRequest: {
+            preferences?: components["schemas"]["Preferences"];
+            /** @description Explicit candidates to rank; omit to rank the server catalog. */
+            candidates?: components["schemas"]["RecommendCandidate"][];
+        };
+        RecommendResponse: {
+            /** @description Candidate book ids, best match first. */
+            ranked: string[];
         };
     };
     responses: never;
@@ -774,6 +817,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    recommend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecommendRequest"];
+            };
+        };
+        responses: {
+            /** @description Ranked candidate ids, best match first. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecommendResponse"];
                 };
             };
         };

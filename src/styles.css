@@ -743,6 +743,76 @@ a {
 	background: #efeee9;
 }
 
+/* ---- app bar nav link ---- */
+.appbar-link {
+	color: var(--muted);
+}
+.appbar-link:hover {
+	color: var(--ink);
+}
+
+/* ---- recommendations (clean default — needs a design pass) ---- */
+.rec-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-4);
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
+	padding: var(--sp-5);
+	margin-bottom: var(--sp-6);
+	max-width: 640px;
+}
+.rec-field {
+	border: 0;
+}
+.rec-legend {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--ink);
+	margin-bottom: var(--sp-2);
+}
+.rec-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sp-2);
+}
+.rec-hint {
+	font-size: 13px;
+	color: var(--faint);
+}
+.rec-check {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-2);
+	font-size: 14px;
+}
+.rec-results {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+	gap: var(--sp-5);
+	padding-bottom: var(--sp-8);
+	list-style: none;
+}
+.rec-item {
+	position: relative;
+}
+.rec-rank {
+	position: absolute;
+	z-index: 1;
+	top: calc(-1 * var(--sp-2));
+	left: calc(-1 * var(--sp-2));
+	font-family: var(--font-mono);
+	font-size: 12px;
+	font-weight: 500;
+	color: #fff;
+	background: var(--pine);
+	border-radius: var(--radius-pill);
+	padding: 2px 8px;
+	box-shadow: var(--shadow);
+}
+
 @media (max-width: 760px) {
 	.detail {
 		grid-template-columns: 1fr;
