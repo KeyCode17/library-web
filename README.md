@@ -1,6 +1,6 @@
 # library-web
 
-TanStack SPA frontend for the Library project. **v0.1.0 — catalog list (GET /books) shipped.**
+TanStack SPA frontend for the Library project. **v0.2.0 — catalog detail + book-finder (shelf/row).**
 
 Single-tenant (ADR-0004). The only type bridge to the backend is the OpenAPI
 contract at `../library-backend/contract/openapi.yaml`, consumed via
