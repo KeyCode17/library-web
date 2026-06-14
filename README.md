@@ -50,12 +50,34 @@ shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004),
   `useListBooks` / `useBook` / `useLogin` / `useRegister` / `useSession` / `useBorrowBook`
   / `useListLoans` / `useReturnLoan` / `useApproveLoan` / `useRecommend` / `useChatHistory`
   (TanStack Query + Store + Form) over a typed `openapi-fetch` client, no React hooks
+- **Hardening (T-009)**: an accessibility pass across every screen — one `<main>`
+  landmark per page (`PageShell`), labelled controls, a consistent visible focus ring,
+  WCAG-AA colour contrast, sane heading order — with **automated axe assertions**
+  (`vitest-axe` per screen + `@axe-core/playwright` on the real browser). Performance:
+  route-level code-splitting (auto), manual vendor chunking, and tuned TanStack Query
+  cache defaults (`staleTime`/`gcTime`, no refetch on focus/reconnect). The catalog
+  `isbn` finder param is consumed (barcode-resolvable).
+- Real types generated from the contract (`pnpm gen:api` → `src/libs/api/schema.d.ts`);
+  `useListBooks` / `useBook` / `useLogin` / `useRegister` / `useSession` / `useBorrowBook`
+  / `useListLoans` / `useReturnLoan` / `useApproveLoan` / `useRecommend` / `useChatHistory`
+  (TanStack Query + Store + Form) over a typed `openapi-fetch` client, no React hooks
 - Test stack: Vitest + Testing Library + MSW (every state, finder, auth, lending + role
-  gating, ranked recommendations, chat over a **fake WebSocket**), Playwright E2E (list →
-  detail; auth flow; borrow → my-loans → return; recommend; chat send/receive over a live WS)
+  gating, ranked recommendations, chat over a **fake WebSocket**, axe a11y), Playwright
+  E2E (list → detail; auth flow; borrow → my-loans → return; recommend; chat over a live
+  WS; real-browser axe)
 - Biome (tabs, double quotes, semicolons as-needed) with the no-React-hooks lint gate
 - Lefthook pre-commit + pre-push hooks (full gate: biome, tsc, contract-drift, vitest, e2e)
 
+> **Design fidelity:** the catalog and book-detail screens still match
+> `docs/designs/*.html` in layout, typography, spacing, and tokens. Two tertiary text
+> colours were darkened for WCAG-AA contrast — the shelf-tab code (→ `--brass-700`) and
+> the "Borrowed" pill (→ a darker grey). The other screens have no design files; their
+> clean defaults stand (and need a design pass).
+>
+> **E2E backend:** the gateway now requires Postgres, so the Playwright `webServer`
+> provisions a throwaway, freshly-seeded Postgres in **Docker** (`scripts/start-gateway.sh`)
+> and the gateway auto-migrates/seeds it. Running E2E needs Docker available.
+>
 > **Token storage:** the JWT is kept in `localStorage` so the session survives reload
 > (acceptable for this SPA, but XSS-exposed). Planned hardening: an httpOnly,
 > SameSite cookie issued by the backend.
