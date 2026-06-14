@@ -1,6 +1,11 @@
 # library-web
 
-TanStack SPA frontend for the Library project. **v0.6.0 — Chat: group chat over WebSocket.**
+TanStack SPA frontend for the Library project. **v0.9.0 — Hardening: Postgres persistence, security, a11y/perf, expanded tests.**
+
+> **Deployment:** the SPA proxies `/api` to the backend gateway, which now requires
+> `DATABASE_URL` (Postgres), `IAM_JWT_SECRET`, and FCM config to be set in real
+> environments. For local E2E the Playwright `webServer` provisions a throwaway
+> Postgres in Docker (see below).
 
 Single-tenant (ADR-0004). The only type bridge to the backend is the OpenAPI
 contract at `../library-backend/contract/openapi.yaml`, consumed via
