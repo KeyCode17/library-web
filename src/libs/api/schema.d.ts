@@ -216,6 +216,52 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/chat/rooms/{room}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Room message history
+         * @description Paginated chat history for a room (oldest first). Any authenticated user may read a room (group chat).
+         */
+        get: operations["chatHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ws/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Group chat WebSocket (upgrade)
+         * @description WebSocket endpoint for live group chat (ADR 0006). OpenAPI cannot model the stream itself, so the protocol is documented here; frontends derive the chat DTOs from `ChatSend` and `ChatMessage` below.
+         *
+         *     Connect: `GET /ws/chat?room=<room>&token=<jwt>` with the standard `Upgrade: websocket` headers. Auth: the `token` query param carries the IAM JWT (browsers cannot set headers on a WS handshake); `Authorization: Bearer <jwt>` is also accepted. Unauthenticated upgrades are rejected with `401` before the protocol switch.
+         *
+         *     Client → server frames: JSON matching `ChatSend` (`{ body }`). Each is persisted to history and broadcast to every connection in the same room.
+         *
+         *     Server → client frames: JSON matching `ChatMessage`. Past history is read over REST via `GET /chat/rooms/{room}/messages`.
+         */
+        get: operations["chatWebSocket"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -350,6 +396,25 @@ export interface components {
         RecommendResponse: {
             /** @description Candidate book ids, best match first. */
             ranked: string[];
+        };
+        /** @description A stored/broadcast chat message (server → client). */
+        ChatMessage: {
+            /** Format: uuid */
+            id: string;
+            room: string;
+            /** Format: uuid */
+            user_id: string;
+            body: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        /** @description A message the client sends over the socket (client → server). */
+        ChatSend: {
+            body: string;
+        };
+        ChatMessageList: {
+            data: components["schemas"]["ChatMessage"][];
+            pagination: components["schemas"]["Pagination"];
         };
     };
     responses: never;
@@ -841,6 +906,73 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RecommendResponse"];
+                };
+            };
+        };
+    };
+    chatHistory: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Room key (an event id, a book category, or "ask-a-librarian"). */
+                room: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A page of messages. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatMessageList"];
+                };
+            };
+            /** @description Not authenticated. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    chatWebSocket: {
+        parameters: {
+            query: {
+                /** @description Room key to join. */
+                room: string;
+                /** @description IAM JWT (the browser-friendly alternative to the Authorization header). */
+                token?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Switching Protocols — the WebSocket is established. */
+            101: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing or invalid token. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
                 };
             };
         };
