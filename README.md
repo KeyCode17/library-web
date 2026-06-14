@@ -1,6 +1,6 @@
 # library-web
 
-TanStack SPA frontend for the Library project. **v0.4.0 — Lending: borrow/return/due/staff-approve.**
+TanStack SPA frontend for the Library project. **v0.5.0 — Recommender (pure crate + /recommend; android on-device UniFFI binding).**
 
 Single-tenant (ADR-0004). The only type bridge to the backend is the OpenAPI
 contract at `../library-backend/contract/openapi.yaml`, consumed via
