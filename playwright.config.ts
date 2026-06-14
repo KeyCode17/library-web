@@ -16,10 +16,22 @@ export default defineConfig({
 			use: { ...devices["Desktop Chrome"] },
 		},
 	],
-	webServer: {
-		command: "pnpm dev",
-		url: "http://localhost:5173",
-		reuseExistingServer: !process.env.CI,
-		timeout: 120_000,
-	},
+	// Start the real backend gateway (build it first if the binary is absent),
+	// then Vite which proxies /api → the gateway. The gateway serves an in-memory
+	// seeded catalogue, so no database needs provisioning.
+	webServer: [
+		{
+			command:
+				"sh -lc 'cd ../library-backend && (test -x target/debug/gateway || cargo build -p gateway) && exec target/debug/gateway'",
+			url: "http://localhost:8080/healthz",
+			reuseExistingServer: !process.env.CI,
+			timeout: 180_000,
+		},
+		{
+			command: "pnpm dev",
+			url: "http://localhost:5173",
+			reuseExistingServer: !process.env.CI,
+			timeout: 120_000,
+		},
+	],
 })
