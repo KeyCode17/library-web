@@ -8,18 +8,28 @@ contract at `../library-backend/contract/openapi.yaml`, consumed via
 
 ## What's built
 
-The M0 toolchain skeleton, plus the **catalog list screen** (T-001) against the
-`GET /books` contract:
+The M0 toolchain skeleton, the **catalog list** (T-001), and the **book detail +
+shelf/row finder** (T-002) against the `GET /books` / `GET /books/{id}` contract:
 
 - Vite + TanStack Router (file-based) SPA, React 19
 - `/` redirects to `/catalog`, which lists books in a card grid (design:
   `docs/designs/catalog.html`) with **loading, empty, error, and loaded** states
+- `/books/$id` book detail (design: `docs/designs/catalog-detail.html`) with
+  **loading, loaded, not-found (404), and error** states; cards link list → detail
+- **Book-finder**: `shelf` + `row` filters held in the URL search params and passed
+  to `GET /books`. The finder UI is intentionally minimal — `catalog.html` ships no
+  finder design, so this is a placeholder **pending a design pass**.
 - Real types generated from the contract (`pnpm gen:api` → `src/libs/api/schema.d.ts`);
-  `useListBooks` (TanStack Query) over a typed `openapi-fetch` client, no React hooks
-- Test stack: Vitest + Testing Library + MSW (the four states), Playwright E2E
-  against the running gateway
+  `useListBooks` / `useBook` (TanStack Query) over a typed `openapi-fetch` client, no
+  React hooks
+- Test stack: Vitest + Testing Library + MSW (every state + finder filtering),
+  Playwright E2E (list → detail) against the running gateway
 - Biome (tabs, double quotes, semicolons as-needed) with the no-React-hooks lint gate
 - Lefthook pre-commit + pre-push hooks (full gate: biome, tsc, contract-drift, vitest, e2e)
+
+> **Presentational, not yet wired:** the detail Borrow/Reserve actions, the appbar
+> search, and the list filter chips render for design fidelity but have no contract
+> backing yet (lending is M2; search/category filters aren't in the contract).
 
 ## Stack
 
