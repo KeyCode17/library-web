@@ -30,6 +30,9 @@ export function AuthMenu() {
 
 	return (
 		<div className="auth-menu">
+			<Link to="/loans" className="auth-link">
+				My loans
+			</Link>
 			{principal && (
 				<div className="auth-id">
 					<span className="auth-email">{principal.email}</span>

@@ -5,6 +5,7 @@ import { coverColor } from "#/components/features/books/cover-color.ts"
 import { MapPinIcon } from "#/components/features/books/map-pin-icon.tsx"
 import { ShelfTab } from "#/components/features/books/shelf-tab.tsx"
 import type { TBook } from "#/routes/books/_apis/index.ts"
+import { BorrowButton } from "./borrow-button.tsx"
 
 interface IBookDetailProps {
 	book: TBook
@@ -43,12 +44,10 @@ export function BookDetail({ book }: IBookDetailProps) {
 							<ShelfTab shelf={book.shelf} row={book.row} />
 						</div>
 					</div>
-					{/* Lending actions are presentational — no lending endpoints in the
-					    contract yet (M2). See README. */}
+					{/* Borrow is wired to POST /loans; Reserve stays presentational
+					    (no reserve endpoint in the contract). */}
 					<div className="actions">
-						<button type="button" className="btn primary">
-							Borrow
-						</button>
+						<BorrowButton book={book} />
 						<button type="button" className="btn">
 							Reserve
 						</button>
