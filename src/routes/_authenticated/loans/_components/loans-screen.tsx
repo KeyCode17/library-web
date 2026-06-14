@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { match } from "ts-pattern"
-import { AppBar } from "#/components/layout/app-bar.tsx"
+import { PageShell } from "#/components/layout/page-shell.tsx"
 import { bookKeys, listBooks } from "#/libs/api/books.ts"
 import { isStaff } from "#/libs/auth/roles.ts"
 import { useSession } from "#/libs/auth/use-session.ts"
@@ -32,8 +32,7 @@ export function LoansScreen() {
 	const titleById = new Map((booksQuery.data?.data ?? []).map((book) => [book.id, book.title]))
 
 	return (
-		<div className="app">
-			<AppBar />
+		<PageShell>
 			<section className="head">
 				<h1>{staff ? "All loans" : "My loans"}</h1>
 				<p>{staff ? "Every active and closed loan." : "Books you've borrowed."}</p>
@@ -76,6 +75,6 @@ export function LoansScreen() {
 					),
 				)
 				.exhaustive()}
-		</div>
+		</PageShell>
 	)
 }

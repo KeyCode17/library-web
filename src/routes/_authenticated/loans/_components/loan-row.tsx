@@ -23,7 +23,7 @@ export function LoanRow({ loan, bookTitle, isStaff, busy, onReturn, onApprove }:
 	return (
 		<article className="loan-row">
 			<div className="loan-main">
-				<h3 className="loan-title">{bookTitle}</h3>
+				<h2 className="loan-title">{bookTitle}</h2>
 				<div className="loan-meta">
 					<LoanStatusBadge status={loan.status} />
 					<span className="loan-due">

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { AppBar } from "#/components/layout/app-bar.tsx"
+import { PageShell } from "#/components/layout/page-shell.tsx"
 import { bookKeys, listBooks } from "#/libs/api/books.ts"
 import { useRecommend } from "#/routes/recommend/_hooks/use-recommend.ts"
 import { RecommendForm } from "./recommend-form.tsx"
@@ -20,8 +20,7 @@ export function RecommendScreen() {
 	const shelves = Array.from(new Set(books.map((book) => book.shelf))).sort()
 
 	return (
-		<div className="app">
-			<AppBar />
+		<PageShell>
 			<section className="head">
 				<h1>Recommendations</h1>
 				<p>Books ranked for what you like.</p>
@@ -37,6 +36,6 @@ export function RecommendScreen() {
 				error={recommendMutation.error}
 				bookById={bookById}
 			/>
-		</div>
+		</PageShell>
 	)
 }

@@ -1,5 +1,5 @@
 import { match } from "ts-pattern"
-import { AppBar } from "#/components/layout/app-bar.tsx"
+import { PageShell } from "#/components/layout/page-shell.tsx"
 import { extractErrorMessage, isApiError } from "#/libs/errors/index.ts"
 import { useBook } from "#/routes/books/_hooks/use-book.ts"
 import { BookDetail } from "./book-detail.tsx"
@@ -15,8 +15,7 @@ export function BookDetailScreen({ id }: IBookDetailScreenProps) {
 	const query = useBook(id)
 
 	return (
-		<div className="app">
-			<AppBar showNav={false} />
+		<PageShell showNav={false}>
 			{match(query)
 				.with({ status: "pending" }, () => <DetailLoading />)
 				.with({ status: "error" }, ({ error, refetch }) =>
@@ -28,6 +27,6 @@ export function BookDetailScreen({ id }: IBookDetailScreenProps) {
 				)
 				.with({ status: "success" }, ({ data }) => <BookDetail book={data} />)
 				.exhaustive()}
-		</div>
+		</PageShell>
 	)
 }

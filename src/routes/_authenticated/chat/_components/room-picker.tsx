@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-import { AppBar } from "#/components/layout/app-bar.tsx"
+import { PageShell } from "#/components/layout/page-shell.tsx"
 import { bookKeys, listBooks } from "#/libs/api/books.ts"
 
 interface IRoom {
@@ -30,8 +30,7 @@ export function RoomPicker() {
 	]
 
 	return (
-		<div className="app">
-			<AppBar />
+		<PageShell>
 			<section className="head">
 				<h1>Chat rooms</h1>
 				<p>Join a group conversation.</p>
@@ -52,6 +51,6 @@ export function RoomPicker() {
 					</li>
 				))}
 			</ul>
-		</div>
+		</PageShell>
 	)
 }

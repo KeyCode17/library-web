@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { useStore } from "@tanstack/react-store"
 import { match } from "ts-pattern"
-import { AppBar } from "#/components/layout/app-bar.tsx"
+import { PageShell } from "#/components/layout/page-shell.tsx"
 import { useSession } from "#/libs/auth/use-session.ts"
 import { chatSocketStore, sendChat, type TChatStatus } from "#/libs/chat/chat-socket.ts"
 import { extractErrorMessage } from "#/libs/errors/index.ts"
@@ -33,8 +33,7 @@ export function ChatRoom({ room }: IChatRoomProps) {
 	const live = socket.room === room ? socket.messages : []
 
 	return (
-		<div className="app">
-			<AppBar />
+		<PageShell>
 			<section className="chat-head">
 				<div>
 					<h1>{roomLabel(room)}</h1>
@@ -83,6 +82,6 @@ export function ChatRoom({ room }: IChatRoomProps) {
 					)
 				})
 				.exhaustive()}
-		</div>
+		</PageShell>
 	)
 }

@@ -8,10 +8,10 @@ interface IBookGridProps {
 // The loaded state: the responsive card grid (design `.grid`).
 export function BookGrid({ books }: IBookGridProps) {
 	return (
-		<main className="grid">
+		<div className="grid">
 			{books.map((book) => (
 				<BookCard key={book.id} book={book} />
 			))}
-		</main>
+		</div>
 	)
 }
