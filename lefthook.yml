@@ -1,0 +1,14 @@
+pre-commit:
+  commands:
+    biome:
+      glob: "*.{ts,tsx,js,jsx,json,css}"
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+pre-push:
+  parallel: true
+  commands:
+    biome:          { run: pnpm biome check . }
+    typecheck:      { run: pnpm tsc --noEmit }
+    contract-drift: { run: pnpm gen:api && git diff --exit-code src/libs/api/schema.d.ts }
+    test:           { run: pnpm vitest run }
+    e2e:            { run: pnpm playwright test }
