@@ -387,6 +387,170 @@ a {
 	max-width: 42ch;
 }
 
+/* ---- card link wrapper (whole card navigates to detail) ---- */
+.book-card-link {
+	display: block;
+	color: inherit;
+}
+
+/* ---- finder (minimal; pending a design pass) ---- */
+.finder {
+	display: flex;
+	align-items: flex-end;
+	gap: var(--sp-3);
+	flex-wrap: wrap;
+	padding-bottom: var(--sp-5);
+}
+.finder-field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-1);
+}
+.finder-label {
+	font-size: 12px;
+	color: var(--muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+.finder-input {
+	font: inherit;
+	color: var(--ink);
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: var(--radius-sm);
+	padding: 8px 12px;
+	min-width: 180px;
+}
+.finder-input--row {
+	min-width: 100px;
+}
+.finder-input:focus {
+	outline: 2px solid color-mix(in srgb, var(--pine) 40%, transparent);
+	outline-offset: 1px;
+}
+.finder-clear {
+	padding: 8px 14px;
+}
+
+/* ---- book detail ---- */
+.appbar--bare .avatar {
+	margin-left: auto;
+}
+.crumbs {
+	padding: var(--sp-5) 0 var(--sp-3);
+	font-size: 13px;
+	color: var(--muted);
+}
+.crumbs a {
+	color: var(--pine);
+	font-weight: 500;
+}
+.detail {
+	display: grid;
+	grid-template-columns: 300px 1fr;
+	gap: var(--sp-8);
+	padding-bottom: var(--sp-8);
+	align-items: start;
+}
+.detail .cover {
+	width: 300px;
+}
+.dt-head h1 {
+	font-family: var(--font-display);
+	font-weight: 600;
+	font-size: 38px;
+	line-height: 1.05;
+	letter-spacing: -0.02em;
+}
+.dt-head .by {
+	color: var(--muted);
+	font-size: 17px;
+	margin-top: var(--sp-2);
+}
+.dt-status {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-3);
+	margin: var(--sp-5) 0;
+}
+.dt-shelf-big {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-3);
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	padding: var(--sp-4);
+	margin: var(--sp-5) 0;
+}
+.dt-shelf-big .lbl {
+	font-size: 12px;
+	color: var(--muted);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+.dt-shelf-big .val {
+	font-family: var(--font-mono);
+	font-size: 20px;
+	color: var(--ink);
+	font-weight: 500;
+}
+.dt-shelf-big .shelf-loc {
+	margin-left: auto;
+}
+.actions {
+	display: flex;
+	gap: var(--sp-3);
+	margin: var(--sp-5) 0;
+}
+.facts {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: var(--sp-4);
+	margin-top: var(--sp-6);
+	max-width: 480px;
+}
+.fact .k {
+	font-size: 12px;
+	color: var(--muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+.fact .v {
+	font-size: 14px;
+	margin-top: 2px;
+}
+.fact .v.mono {
+	font-family: var(--font-mono);
+}
+
+/* ---- detail loading skeleton ---- */
+.detail .cover.skeleton-box {
+	width: 300px;
+	aspect-ratio: 3 / 4;
+}
+.skeleton-line--h1 {
+	width: 70%;
+	height: 32px;
+}
+.skeleton-shelf {
+	height: 64px;
+	margin-top: var(--sp-5);
+}
+
+@media (max-width: 760px) {
+	.detail {
+		grid-template-columns: 1fr;
+	}
+	.detail .cover,
+	.detail .cover.skeleton-box {
+		width: 200px;
+	}
+	.dt-head h1 {
+		font-size: 28px;
+	}
+}
+
 @media (max-width: 640px) {
 	.appbar nav {
 		display: none;
