@@ -9,8 +9,8 @@ contract at `../library-backend/contract/openapi.yaml`, consumed via
 ## What's built
 
 The M0 toolchain skeleton, the **catalog list** (T-001), the **book detail +
-shelf/row finder** (T-002), **IAM auth** (T-003), and **lending** (T-004) against
-the contract:
+shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004), and
+**recommendations** (T-005) against the contract:
 
 - Vite + TanStack Router (file-based) SPA, React 19
 - `/` redirects to `/catalog`, which lists books in a card grid (design:
@@ -32,12 +32,19 @@ the contract:
   action; **role-aware** — `librarian`/`admin` see all loans and an **Approve** action,
   hidden for members (server enforces regardless). **No lending design exists — this is
   a clean default, needs a design pass.**
+- **Recommendations**: a public `/recommend` view — express `Preferences` (shelf chips,
+  authors, available-only) and `POST /recommend` over **REST** (the decision-tree runs
+  server-side). The response is ranked **book ids**, resolved against the catalogue and
+  rendered in rank order; states idle/loading/empty/error/loaded. **No recommend design
+  exists — clean default, needs a design pass.** (Android consumes the same recommender
+  via the on-device FFI binding instead — not the web's concern.)
 - Real types generated from the contract (`pnpm gen:api` → `src/libs/api/schema.d.ts`);
   `useListBooks` / `useBook` / `useLogin` / `useRegister` / `useSession` / `useBorrowBook`
-  / `useListLoans` / `useReturnLoan` / `useApproveLoan` (TanStack Query + Store + Form)
-  over a typed `openapi-fetch` client, no React hooks
-- Test stack: Vitest + Testing Library + MSW (every state, finder, auth, lending +
-  role gating), Playwright E2E (list → detail; auth flow; borrow → my-loans → return)
+  / `useListLoans` / `useReturnLoan` / `useApproveLoan` / `useRecommend` (TanStack Query +
+  Store + Form) over a typed `openapi-fetch` client, no React hooks
+- Test stack: Vitest + Testing Library + MSW (every state, finder, auth, lending + role
+  gating, ranked recommendations), Playwright E2E (list → detail; auth flow; borrow →
+  my-loans → return; recommend)
 - Biome (tabs, double quotes, semicolons as-needed) with the no-React-hooks lint gate
 - Lefthook pre-commit + pre-push hooks (full gate: biome, tsc, contract-drift, vitest, e2e)
 
