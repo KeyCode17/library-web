@@ -18,6 +18,8 @@ import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedLoansIndexRouteImport } from './routes/_authenticated/loans/index'
+import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat/index'
+import { Route as AuthenticatedChatRoomRouteImport } from './routes/_authenticated/chat/$room'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -63,6 +65,16 @@ const AuthenticatedLoansIndexRoute = AuthenticatedLoansIndexRouteImport.update({
   path: '/loans/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedChatRoomRoute = AuthenticatedChatRoomRouteImport.update({
+  id: '/chat/$room',
+  path: '/chat/$room',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -72,6 +84,8 @@ export interface FileRoutesByFullPath {
   '/books/$id': typeof BooksIdRoute
   '/catalog/': typeof CatalogIndexRoute
   '/recommend/': typeof RecommendIndexRoute
+  '/chat/$room': typeof AuthenticatedChatRoomRoute
+  '/chat/': typeof AuthenticatedChatIndexRoute
   '/loans/': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRoutesByTo {
@@ -82,6 +96,8 @@ export interface FileRoutesByTo {
   '/books/$id': typeof BooksIdRoute
   '/catalog': typeof CatalogIndexRoute
   '/recommend': typeof RecommendIndexRoute
+  '/chat/$room': typeof AuthenticatedChatRoomRoute
+  '/chat': typeof AuthenticatedChatIndexRoute
   '/loans': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRoutesById {
@@ -94,6 +110,8 @@ export interface FileRoutesById {
   '/books/$id': typeof BooksIdRoute
   '/catalog/': typeof CatalogIndexRoute
   '/recommend/': typeof RecommendIndexRoute
+  '/_authenticated/chat/$room': typeof AuthenticatedChatRoomRoute
+  '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
   '/_authenticated/loans/': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRouteTypes {
@@ -106,6 +124,8 @@ export interface FileRouteTypes {
     | '/books/$id'
     | '/catalog/'
     | '/recommend/'
+    | '/chat/$room'
+    | '/chat/'
     | '/loans/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -116,6 +136,8 @@ export interface FileRouteTypes {
     | '/books/$id'
     | '/catalog'
     | '/recommend'
+    | '/chat/$room'
+    | '/chat'
     | '/loans'
   id:
     | '__root__'
@@ -127,6 +149,8 @@ export interface FileRouteTypes {
     | '/books/$id'
     | '/catalog/'
     | '/recommend/'
+    | '/_authenticated/chat/$room'
+    | '/_authenticated/chat/'
     | '/_authenticated/loans/'
   fileRoutesById: FileRoutesById
 }
@@ -205,16 +229,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLoansIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/chat/': {
+      id: '/_authenticated/chat/'
+      path: '/chat'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof AuthenticatedChatIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/chat/$room': {
+      id: '/_authenticated/chat/$room'
+      path: '/chat/$room'
+      fullPath: '/chat/$room'
+      preLoaderRoute: typeof AuthenticatedChatRoomRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedChatRoomRoute: typeof AuthenticatedChatRoomRoute
+  AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
   AuthenticatedLoansIndexRoute: typeof AuthenticatedLoansIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedChatRoomRoute: AuthenticatedChatRoomRoute,
+  AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
   AuthenticatedLoansIndexRoute: AuthenticatedLoansIndexRoute,
 }
 

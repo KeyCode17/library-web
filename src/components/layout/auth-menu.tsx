@@ -30,6 +30,9 @@ export function AuthMenu() {
 
 	return (
 		<div className="auth-menu">
+			<Link to="/chat" className="auth-link">
+				Chat
+			</Link>
 			<Link to="/loans" className="auth-link">
 				My loans
 			</Link>
