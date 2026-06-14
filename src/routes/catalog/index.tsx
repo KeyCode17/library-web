@@ -13,6 +13,9 @@ function validateSearch(search: Record<string, unknown>): TFinder {
 	if (search.row !== undefined && search.row !== "" && Number.isInteger(row)) {
 		finder.row = row
 	}
+	if (typeof search.isbn === "string" && search.isbn !== "") {
+		finder.isbn = search.isbn
+	}
 	return finder
 }
 
