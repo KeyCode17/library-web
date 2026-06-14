@@ -1,15 +1,16 @@
 import { cn } from "#/libs/clsx/index.ts"
+import { AuthMenu } from "./auth-menu.tsx"
 
 interface IAppBarProps {
 	// The detail design omits the nav; the list shows it.
 	showNav?: boolean
 }
 
-// Application bar (design `.appbar`): wordmark, search, optional nav, avatar.
+// Application bar (design `.appbar`): wordmark, search, optional nav, auth menu.
 //
 // Search and the secondary nav items (Borrowed, Chat) are presentational — the
 // contract exposes neither search nor those screens yet, so they are rendered for
-// design fidelity without faking behaviour.
+// design fidelity without faking behaviour. The auth menu (sign-in state) is live.
 export function AppBar({ showNav = true }: IAppBarProps) {
 	return (
 		<header className={cn("appbar", !showNav && "appbar--bare")}>
@@ -43,7 +44,7 @@ export function AppBar({ showNav = true }: IAppBarProps) {
 					<span>Chat</span>
 				</nav>
 			)}
-			<div className="avatar">DK</div>
+			<AuthMenu />
 		</header>
 	)
 }

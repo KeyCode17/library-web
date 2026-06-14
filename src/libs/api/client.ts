@@ -1,4 +1,5 @@
 import createClient from "openapi-fetch"
+import { getToken } from "#/libs/auth/token-store.ts"
 import type { paths } from "./schema"
 
 // Single cookie-credentialed client, typed against the generated OpenAPI `paths`.
@@ -14,4 +15,13 @@ export const api = createClient<paths>({
 	// Resolve `globalThis.fetch` per call rather than capturing it at creation,
 	// so test interceptors (MSW) installed after this module loads are honoured.
 	fetch: (request: Request) => globalThis.fetch(request),
+})
+
+// Attach the bearer token (read live from the token store) to every request.
+api.use({
+	onRequest({ request }) {
+		const token = getToken()
+		if (token) request.headers.set("Authorization", `Bearer ${token}`)
+		return request
+	},
 })
