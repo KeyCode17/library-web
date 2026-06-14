@@ -8,8 +8,8 @@ contract at `../library-backend/contract/openapi.yaml`, consumed via
 
 ## What's built
 
-The M0 toolchain skeleton, the **catalog list** (T-001), and the **book detail +
-shelf/row finder** (T-002) against the `GET /books` / `GET /books/{id}` contract:
+The M0 toolchain skeleton, the **catalog list** (T-001), the **book detail +
+shelf/row finder** (T-002), and **IAM auth** (T-003) against the contract:
 
 - Vite + TanStack Router (file-based) SPA, React 19
 - `/` redirects to `/catalog`, which lists books in a card grid (design:
@@ -19,14 +19,27 @@ shelf/row finder** (T-002) against the `GET /books` / `GET /books/{id}` contract
 - **Book-finder**: `shelf` + `row` filters held in the URL search params and passed
   to `GET /books`. The finder UI is intentionally minimal — `catalog.html` ships no
   finder design, so this is a placeholder **pending a design pass**.
+- **IAM auth**: `/auth/login` + `/auth/register` (TanStack Form + Zod), logout, and a
+  live session (`GET /auth/me`) surfaced in the app bar. A guarded `/account` route
+  (`_authenticated` layout) demonstrates the route guard; **the catalogue stays
+  public**. The bearer token is attached to every request via openapi-fetch
+  middleware. **The auth screens are a clean default and need a design pass** (no
+  `docs/designs/login.html` exists).
 - Real types generated from the contract (`pnpm gen:api` → `src/libs/api/schema.d.ts`);
-  `useListBooks` / `useBook` (TanStack Query) over a typed `openapi-fetch` client, no
-  React hooks
-- Test stack: Vitest + Testing Library + MSW (every state + finder filtering),
-  Playwright E2E (list → detail) against the running gateway
+  `useListBooks` / `useBook` / `useLogin` / `useRegister` / `useSession` (TanStack
+  Query + Store + Form) over a typed `openapi-fetch` client, no React hooks
+- Test stack: Vitest + Testing Library + MSW (every state, finder filtering, the auth
+  flow), Playwright E2E (list → detail; register → guarded account → logout → login)
 - Biome (tabs, double quotes, semicolons as-needed) with the no-React-hooks lint gate
 - Lefthook pre-commit + pre-push hooks (full gate: biome, tsc, contract-drift, vitest, e2e)
 
+> **Token storage:** the JWT is kept in `localStorage` so the session survives reload
+> (acceptable for this SPA, but XSS-exposed). Planned hardening: an httpOnly,
+> SameSite cookie issued by the backend.
+>
+> **Deferred:** admin role assignment (`POST /users/{id}/roles`) is M4 (admin/RBAC)
+> per the plan, not this 0.3.0 IAM release — deferred, not built.
+>
 > **Presentational, not yet wired:** the detail Borrow/Reserve actions, the appbar
 > search, and the list filter chips render for design fidelity but have no contract
 > backing yet (lending is M2; search/category filters aren't in the contract).
