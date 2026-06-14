@@ -13,9 +13,12 @@ export default defineConfig({
 	},
 	server: {
 		proxy: {
+			// The gateway serves the contract paths at its root (e.g. /books), so
+			// strip the /api prefix the browser uses: /api/books → :8080/books.
 			"/api": {
 				target: "http://localhost:8080",
 				changeOrigin: true,
+				rewrite: (path) => path.replace(/^\/api/, ""),
 			},
 		},
 	},
