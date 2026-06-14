@@ -1,6 +1,6 @@
 # library-web
 
-TanStack SPA frontend for the Library project. **v0.5.0 — Recommender (pure crate + /recommend; android on-device UniFFI binding).**
+TanStack SPA frontend for the Library project. **v0.6.0 — Chat: group chat over WebSocket.**
 
 Single-tenant (ADR-0004). The only type bridge to the backend is the OpenAPI
 contract at `../library-backend/contract/openapi.yaml`, consumed via
