@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RecommendIndexRouteImport } from './routes/recommend/index'
 import { Route as CatalogIndexRouteImport } from './routes/catalog/index'
 import { Route as BooksIdRouteImport } from './routes/books/$id'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
@@ -25,6 +26,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecommendIndexRoute = RecommendIndexRouteImport.update({
+  id: '/recommend/',
+  path: '/recommend/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogIndexRoute = CatalogIndexRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/books/$id': typeof BooksIdRoute
   '/catalog/': typeof CatalogIndexRoute
+  '/recommend/': typeof RecommendIndexRoute
   '/loans/': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRoutesByTo {
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/books/$id': typeof BooksIdRoute
   '/catalog': typeof CatalogIndexRoute
+  '/recommend': typeof RecommendIndexRoute
   '/loans': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRoutesById {
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/books/$id': typeof BooksIdRoute
   '/catalog/': typeof CatalogIndexRoute
+  '/recommend/': typeof RecommendIndexRoute
   '/_authenticated/loans/': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRouteTypes {
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/books/$id'
     | '/catalog/'
+    | '/recommend/'
     | '/loans/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/books/$id'
     | '/catalog'
+    | '/recommend'
     | '/loans'
   id:
     | '__root__'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/books/$id'
     | '/catalog/'
+    | '/recommend/'
     | '/_authenticated/loans/'
   fileRoutesById: FileRoutesById
 }
@@ -125,6 +137,7 @@ export interface RootRouteChildren {
   AuthRegisterRoute: typeof AuthRegisterRoute
   BooksIdRoute: typeof BooksIdRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
+  RecommendIndexRoute: typeof RecommendIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recommend/': {
+      id: '/recommend/'
+      path: '/recommend'
+      fullPath: '/recommend/'
+      preLoaderRoute: typeof RecommendIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/catalog/': {
@@ -209,6 +229,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRegisterRoute: AuthRegisterRoute,
   BooksIdRoute: BooksIdRoute,
   CatalogIndexRoute: CatalogIndexRoute,
+  RecommendIndexRoute: RecommendIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,5 +1,5 @@
+import { BookCard } from "#/components/features/books/book-card.tsx"
 import type { TBook } from "#/routes/catalog/_apis/index.ts"
-import { BookCard } from "./book-card.tsx"
 
 interface IBookGridProps {
 	books: TBook[]
