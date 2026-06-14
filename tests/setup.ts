@@ -4,7 +4,11 @@ import { afterAll, afterEach, beforeAll } from "vitest"
 import { clearToken } from "#/libs/auth/token-store.ts"
 import { server } from "./mocks/server.ts"
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }))
+// jsdom doesn't implement scrollTo; TanStack Router's scroll restoration calls it.
+beforeAll(() => {
+	window.scrollTo = () => {}
+	server.listen({ onUnhandledRequest: "error" })
+})
 afterEach(() => {
 	cleanup()
 	server.resetHandlers()
