@@ -1,5 +1,5 @@
 import { match } from "ts-pattern"
-import { AppBar } from "#/components/layout/app-bar.tsx"
+import { PageShell } from "#/components/layout/page-shell.tsx"
 import { extractErrorMessage } from "#/libs/errors/index.ts"
 import { useListBooks } from "#/routes/catalog/_hooks/use-list-books.ts"
 import { BookGrid } from "./book-grid.tsx"
@@ -19,8 +19,7 @@ export function CatalogScreen({ finder = {}, onFinderChange }: ICatalogScreenPro
 	const query = useListBooks(finder)
 
 	return (
-		<div className="app">
-			<AppBar />
+		<PageShell>
 			<CatalogToolbar total={query.data?.pagination.total} />
 			<FinderControls value={finder} onChange={(next) => onFinderChange?.(next)} />
 			{match(query)
@@ -32,6 +31,6 @@ export function CatalogScreen({ finder = {}, onFinderChange }: ICatalogScreenPro
 					data.data.length === 0 ? <CatalogEmpty /> : <BookGrid books={data.data} />,
 				)
 				.exhaustive()}
-		</div>
+		</PageShell>
 	)
 }

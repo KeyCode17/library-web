@@ -12,7 +12,7 @@ interface IAuthCardProps {
 // is a clean default built on the existing tokens; see README (needs a design pass).
 export function AuthCard({ title, subtitle, children, footer }: IAuthCardProps) {
 	return (
-		<div className="auth-page">
+		<main className="auth-page">
 			<Link to="/catalog" className="wordmark auth-brand">
 				Stacks<span className="dot">.</span>
 			</Link>
@@ -22,6 +22,6 @@ export function AuthCard({ title, subtitle, children, footer }: IAuthCardProps) 
 				{children}
 				<p className="auth-foot">{footer}</p>
 			</div>
-		</div>
+		</main>
 	)
 }

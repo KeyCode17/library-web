@@ -40,6 +40,16 @@
 	padding: 0;
 }
 
+/* Consistent, visible keyboard focus for all interactive elements (a11y). */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+	outline: 2px solid var(--pine);
+	outline-offset: 2px;
+	border-radius: var(--radius-sm);
+}
+
 body {
 	font-family: var(--font-body);
 	color: var(--ink);
@@ -117,7 +127,8 @@ a {
 	white-space: nowrap;
 }
 .shelf-tab .sl {
-	color: var(--brass);
+	/* darkened from --brass to --brass-700 for WCAG AA contrast on --brass-100 */
+	color: var(--brass-700);
 	font-weight: 500;
 }
 
@@ -136,7 +147,8 @@ a {
 	background: var(--sage-100);
 }
 .avail.out {
-	color: var(--faint);
+	/* darkened from --faint (#9a9a93, 2.4:1) for WCAG AA contrast on #efeee9 */
+	color: #555852;
 	background: #efeee9;
 }
 .avail .d {
@@ -558,7 +570,7 @@ a {
 	background: none;
 	border: 0;
 	cursor: pointer;
-	padding: 0;
+	padding: 6px 4px;
 }
 .auth-link:hover {
 	color: var(--ink);

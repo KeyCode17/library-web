@@ -1,5 +1,5 @@
 import { match } from "ts-pattern"
-import { AppBar } from "#/components/layout/app-bar.tsx"
+import { PageShell } from "#/components/layout/page-shell.tsx"
 import { useSession } from "#/libs/auth/use-session.ts"
 import { extractErrorMessage } from "#/libs/errors/index.ts"
 
@@ -9,8 +9,7 @@ export function AccountScreen() {
 	const session = useSession()
 
 	return (
-		<div className="app">
-			<AppBar />
+		<PageShell>
 			<section className="head">
 				<h1>Account</h1>
 				<p>Your library identity.</p>
@@ -44,6 +43,6 @@ export function AccountScreen() {
 					</dl>
 				))
 				.exhaustive()}
-		</div>
+		</PageShell>
 	)
 }

@@ -19,7 +19,7 @@ export function BookCard({ book }: IBookCardProps) {
 			<Link to="/books/$id" params={{ id: book.id }} className="book-card-link">
 				<BookCover title={book.title} author={book.author} color={coverColor(book.id)} />
 				<div className="bc-body">
-					<h3 className="bc-title">{book.title}</h3>
+					<h2 className="bc-title">{book.title}</h2>
 					<p className="bc-author">{book.author}</p>
 					<div className="bc-meta">
 						<AvailabilityBadge available={book.available} />
