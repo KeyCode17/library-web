@@ -262,6 +262,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/notifications/devices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register an FCM device token
+         * @description Register (or refresh) an FCM push token for the authenticated user, so the due-date scheduler can reach their device.
+         */
+        post: operations["registerDevice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Reminder history
+         * @description The authenticated user's reminder history. Reminders are produced by an internal background scheduler (ADR 0006) that periodically scans loan due dates and pushes due-soon/overdue reminders via FCM — it is not a request-driven endpoint, so it has no path of its own.
+         */
+        get: operations["listNotifications"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -416,6 +456,45 @@ export interface components {
             data: components["schemas"]["ChatMessage"][];
             pagination: components["schemas"]["Pagination"];
         };
+        /** @enum {string} */
+        Platform: "android" | "ios" | "web";
+        /**
+         * @description Why a reminder fired.
+         * @enum {string}
+         */
+        ReminderKind: "due_soon" | "overdue";
+        DeviceRegistration: {
+            /** @description FCM registration token. */
+            token: string;
+            platform: components["schemas"]["Platform"];
+        };
+        Device: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            user_id: string;
+            token: string;
+            platform: components["schemas"]["Platform"];
+            /** Format: date-time */
+            registered_at: string;
+        };
+        /** @description A logged due-date reminder. */
+        Notification: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            user_id: string;
+            /** Format: uuid */
+            loan_id: string;
+            kind: components["schemas"]["ReminderKind"];
+            message: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        NotificationList: {
+            data: components["schemas"]["Notification"][];
+            pagination: components["schemas"]["Pagination"];
+        };
     };
     responses: never;
     parameters: never;
@@ -459,6 +538,8 @@ export interface operations {
                 shelf?: string;
                 /** @description Book-finder filter: narrow to books in this exact row. Combinable with shelf and with page/page_size. */
                 row?: number;
+                /** @description Book-finder filter: narrow to books with this exact ISBN. Lets a client resolve a scanned barcode to a book server-side. */
+                isbn?: string;
             };
             header?: never;
             path?: never;
@@ -466,7 +547,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description A page of books (after any shelf/row filtering). */
+            /** @description A page of books (after any shelf/row/ISBN filtering). */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -967,6 +1048,80 @@ export interface operations {
                 content?: never;
             };
             /** @description Missing or invalid token. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    registerDevice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeviceRegistration"];
+            };
+        };
+        responses: {
+            /** @description The registered device. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Device"];
+                };
+            };
+            /** @description Empty/invalid token. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not authenticated. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listNotifications: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A page of reminders. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationList"];
+                };
+            };
+            /** @description Not authenticated. */
             401: {
                 headers: {
                     [name: string]: unknown;
