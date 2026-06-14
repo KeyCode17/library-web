@@ -1,6 +1,6 @@
 # library-web
 
-TanStack SPA frontend for the Library project. **v0.3.0 — IAM: auth, roles, permissions (login/register/session; admin role UI + auth-screen design deferred).**
+TanStack SPA frontend for the Library project. **v0.4.0 — Lending: borrow/return/due/staff-approve.**
 
 Single-tenant (ADR-0004). The only type bridge to the backend is the OpenAPI
 contract at `../library-backend/contract/openapi.yaml`, consumed via
