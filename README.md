@@ -9,7 +9,8 @@ contract at `../library-backend/contract/openapi.yaml`, consumed via
 ## What's built
 
 The M0 toolchain skeleton, the **catalog list** (T-001), the **book detail +
-shelf/row finder** (T-002), and **IAM auth** (T-003) against the contract:
+shelf/row finder** (T-002), **IAM auth** (T-003), and **lending** (T-004) against
+the contract:
 
 - Vite + TanStack Router (file-based) SPA, React 19
 - `/` redirects to `/catalog`, which lists books in a card grid (design:
@@ -25,11 +26,18 @@ shelf/row finder** (T-002), and **IAM auth** (T-003) against the contract:
   public**. The bearer token is attached to every request via openapi-fetch
   middleware. **The auth screens are a clean default and need a design pass** (no
   `docs/designs/login.html` exists).
+- **Lending**: a wired **Borrow** on the book detail (`POST /loans`; reflects the
+  book going on loan; handles 401 → login prompt and 409 → already-on-loan). A guarded
+  `/loans` view (`GET /loans`) lists loans with status + due date and a **Return**
+  action; **role-aware** — `librarian`/`admin` see all loans and an **Approve** action,
+  hidden for members (server enforces regardless). **No lending design exists — this is
+  a clean default, needs a design pass.**
 - Real types generated from the contract (`pnpm gen:api` → `src/libs/api/schema.d.ts`);
-  `useListBooks` / `useBook` / `useLogin` / `useRegister` / `useSession` (TanStack
-  Query + Store + Form) over a typed `openapi-fetch` client, no React hooks
-- Test stack: Vitest + Testing Library + MSW (every state, finder filtering, the auth
-  flow), Playwright E2E (list → detail; register → guarded account → logout → login)
+  `useListBooks` / `useBook` / `useLogin` / `useRegister` / `useSession` / `useBorrowBook`
+  / `useListLoans` / `useReturnLoan` / `useApproveLoan` (TanStack Query + Store + Form)
+  over a typed `openapi-fetch` client, no React hooks
+- Test stack: Vitest + Testing Library + MSW (every state, finder, auth, lending +
+  role gating), Playwright E2E (list → detail; auth flow; borrow → my-loans → return)
 - Biome (tabs, double quotes, semicolons as-needed) with the no-React-hooks lint gate
 - Lefthook pre-commit + pre-push hooks (full gate: biome, tsc, contract-drift, vitest, e2e)
 
@@ -38,11 +46,11 @@ shelf/row finder** (T-002), and **IAM auth** (T-003) against the contract:
 > SameSite cookie issued by the backend.
 >
 > **Deferred:** admin role assignment (`POST /users/{id}/roles`) is M4 (admin/RBAC)
-> per the plan, not this 0.3.0 IAM release — deferred, not built.
+> per the plan — deferred, not built.
 >
-> **Presentational, not yet wired:** the detail Borrow/Reserve actions, the appbar
-> search, and the list filter chips render for design fidelity but have no contract
-> backing yet (lending is M2; search/category filters aren't in the contract).
+> **Presentational, not yet wired:** the detail **Reserve** action, the appbar search,
+> and the list filter chips render for design fidelity but have no contract backing
+> (no reserve endpoint; search/category filters aren't in the contract).
 
 ## Stack
 
