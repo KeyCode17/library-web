@@ -1,0 +1,71 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": [
+			"**",
+			"!docs",
+			"!**/routeTree.gen.ts",
+			"!src/libs/api/schema.d.ts",
+			"!src/styles.css",
+			"!dist",
+			"!coverage",
+			"!playwright-report",
+			"!test-results"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"lineWidth": 100
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double",
+			"semicolons": "asNeeded"
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"style": {
+				"noRestrictedImports": {
+					"level": "error",
+					"options": {
+						"paths": {
+							"react": {
+								"importNames": [
+									"useState",
+									"useEffect",
+									"useReducer",
+									"useContext",
+									"useRef",
+									"useMemo",
+									"useCallback",
+									"useImperativeHandle",
+									"useLayoutEffect",
+									"useDebugValue",
+									"useId",
+									"useTransition",
+									"useDeferredValue",
+									"useSyncExternalStore",
+									"useInsertionEffect",
+									"useActionState",
+									"useFormStatus",
+									"useOptimistic",
+									"use"
+								],
+								"message": "React hooks are banned (no-react-hooks rule). Use TanStack primitives — see .claude/rules/no-react-hooks.md."
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
