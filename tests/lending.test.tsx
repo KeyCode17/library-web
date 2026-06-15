@@ -1,7 +1,6 @@
 import { fireEvent, screen, within } from "@testing-library/react"
 import { HttpResponse, http } from "msw"
 import { describe, expect, it } from "vitest"
-import { setToken } from "#/libs/auth/token-store.ts"
 import { makeBook, makeBookList } from "./mocks/books.ts"
 import { makeLoan, makeLoanList } from "./mocks/loans.ts"
 import { server } from "./mocks/server.ts"
@@ -25,7 +24,6 @@ describe("lending — borrow (detail)", () => {
 			}),
 			http.get("*/api/auth/me", () => HttpResponse.json(member)),
 		)
-		setToken("jwt")
 
 		renderRoute(`/books/${BOOK_ID}`)
 		fireEvent.click(await screen.findByRole("button", { name: "Borrow" }))
@@ -47,7 +45,6 @@ describe("lending — borrow (detail)", () => {
 			),
 			http.get("*/api/auth/me", () => HttpResponse.json(member)),
 		)
-		setToken("jwt")
 
 		renderRoute(`/books/${BOOK_ID}`)
 		fireEvent.click(await screen.findByRole("button", { name: "Borrow" }))
@@ -85,7 +82,6 @@ describe("lending — my loans", () => {
 	}
 
 	it("renders loans with status and due date", async () => {
-		setToken("jwt")
 		mockLoans([makeLoan({ id: LOAN_ID, book_id: BOOK_ID, status: "borrowed" })], member)
 
 		renderRoute("/loans")
@@ -99,7 +95,6 @@ describe("lending — my loans", () => {
 	})
 
 	it("returns a borrowed loan", async () => {
-		setToken("jwt")
 		let status: "borrowed" | "returned" = "borrowed"
 		server.use(
 			http.get("*/api/loans", () =>
@@ -122,7 +117,6 @@ describe("lending — my loans", () => {
 	})
 
 	it("hides Approve for members and shows 'awaiting approval'", async () => {
-		setToken("jwt")
 		mockLoans([makeLoan({ id: LOAN_ID, book_id: BOOK_ID, status: "returned" })], member)
 
 		renderRoute("/loans")
@@ -133,12 +127,11 @@ describe("lending — my loans", () => {
 	})
 
 	it("shows Approve for staff on a returned loan", async () => {
-		setToken("jwt")
 		mockLoans([makeLoan({ id: LOAN_ID, book_id: BOOK_ID, status: "returned" })], staff)
 
 		renderRoute("/loans")
 
 		expect(await screen.findByRole("heading", { level: 1, name: "All loans" })).toBeInTheDocument()
-		expect(screen.getByRole("button", { name: "Approve" })).toBeInTheDocument()
+		expect(await screen.findByRole("button", { name: "Approve" })).toBeInTheDocument()
 	})
 })

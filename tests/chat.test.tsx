@@ -1,7 +1,6 @@
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react"
 import { delay, HttpResponse, http } from "msw"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { setToken } from "#/libs/auth/token-store.ts"
 import { disconnectChat } from "#/libs/chat/chat-socket.ts"
 import { server } from "./mocks/server.ts"
 import { MockWebSocket } from "./mocks/websocket.ts"
@@ -35,7 +34,7 @@ function makeHistory(messages: ReturnType<typeof makeMessage>[]) {
 beforeEach(() => {
 	vi.stubGlobal("WebSocket", MockWebSocket)
 	MockWebSocket.reset()
-	setToken("jwt")
+	// signed in via the session cookie (no JS token)
 	server.use(http.get(ME_URL, () => HttpResponse.json(me)))
 })
 
@@ -57,10 +56,11 @@ describe("chat room", () => {
 		// history rendered
 		expect(await screen.findByText("old message")).toBeInTheDocument()
 
-		// the loader opened a socket to the right room with the token
+		// the loader opened a socket to the right room — auth rides the session
+		// cookie, so there is NO token in the URL
 		const socket = MockWebSocket.last()
 		expect(socket.url).toContain("/api/ws/chat?room=ask-a-librarian")
-		expect(socket.url).toContain("token=jwt")
+		expect(socket.url).not.toContain("token=")
 
 		// open the socket → composer enabled
 		act(() => socket.open())
@@ -112,10 +112,12 @@ describe("chat room", () => {
 	})
 
 	it("redirects to login when not authenticated", async () => {
-		disconnectChat()
-		// clear the token set in beforeEach
-		const { clearToken } = await import("#/libs/auth/token-store.ts")
-		clearToken()
+		// no valid session cookie → /auth/me is 401 → the guard redirects to login
+		server.use(
+			http.get(ME_URL, () =>
+				HttpResponse.json({ code: "unauthorized", message: "out" }, { status: 401 }),
+			),
+		)
 
 		renderRoute(`/chat/${ROOM}`)
 
