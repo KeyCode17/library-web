@@ -1,6 +1,6 @@
 # library-web
 
-TanStack SPA frontend for the Library project. **v0.9.0 — Hardening: Postgres persistence, security, a11y/perf, expanded tests.**
+TanStack SPA frontend for the Library project. **v1.0.0 — ready to deploy/live.** Full feature set (catalog, auth, lending, recommendations, chat), a11y + perf hardened, contract-typed against the backend.
 
 > **Deployment:** the SPA proxies `/api` to the backend gateway, which now requires
 > `DATABASE_URL` (Postgres), `IAM_JWT_SECRET`, and FCM config to be set in real
