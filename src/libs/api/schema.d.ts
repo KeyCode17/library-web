@@ -90,8 +90,31 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Exchange credentials for a JWT */
+        /**
+         * Exchange credentials for a JWT
+         * @description Returns the JWT in the body (android sends it as `Authorization: Bearer`) AND sets it as an `HttpOnly`, `SameSite=Lax` `session` cookie (web; `Secure` is added in production). Protected endpoints accept EITHER the bearer header (which takes precedence) or the cookie.
+         */
         post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Clear the session cookie
+         * @description Expires the `session` cookie (`Set-Cookie: session=; Max-Age=0`). Bearer clients simply discard their token; this is a no-op for them.
+         */
+        post: operations["logout"];
         delete?: never;
         options?: never;
         head?: never;
@@ -362,7 +385,7 @@ export interface paths {
          * Group chat WebSocket (upgrade)
          * @description WebSocket endpoint for live group chat (ADR 0006). OpenAPI cannot model the stream itself, so the protocol is documented here; frontends derive the chat DTOs from `ChatSend` and `ChatMessage` below.
          *
-         *     Connect: `GET /ws/chat?room=<room>&token=<jwt>` with the standard `Upgrade: websocket` headers. Auth: the `token` query param carries the IAM JWT (browsers cannot set headers on a WS handshake); `Authorization: Bearer <jwt>` is also accepted. Unauthenticated upgrades are rejected with `401` before the protocol switch.
+         *     Connect: `GET /ws/chat?room=<room>&token=<jwt>` with the standard `Upgrade: websocket` headers. Auth is resolved in order: the `token` query param carries the IAM JWT (browsers cannot set headers on a WS handshake); then `Authorization: Bearer <jwt>` for non-browser clients; then the `session` cookie (web, whose JWT lives in an httpOnly cookie with no JS token available for the query param). Unauthenticated upgrades are rejected with `401` before the protocol switch.
          *
          *     Client → server frames: JSON matching `ChatSend` (`{ body }`). Each is persisted to history and broadcast to every connection in the same room.
          *
@@ -707,6 +730,8 @@ export interface operations {
                 row?: number;
                 /** @description Book-finder filter: narrow to books with this exact ISBN. Lets a client resolve a scanned barcode to a book server-side. */
                 isbn?: string;
+                /** @description Free-text search: case-insensitive substring match over title, author, and ISBN. Combinable with the other filters and pagination. */
+                q?: string;
             };
             header?: never;
             path?: never;
@@ -714,7 +739,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description A page of books (after any shelf/row/ISBN filtering). */
+            /** @description A page of books (after any shelf/row/ISBN/text filtering). */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -830,7 +855,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description A signed bearer token. */
+            /** @description A signed bearer token (also set as the `session` cookie via Set-Cookie). */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -847,6 +872,24 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["Error"];
                 };
+            };
+        };
+    };
+    logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Session cleared. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
