@@ -405,7 +405,7 @@ a {
 	color: inherit;
 }
 
-/* ---- finder (minimal; pending a design pass) ---- */
+/* ---- finder (intentionally minimal — catalog.html ships no finder UI) ---- */
 .finder {
 	display: flex;
 	align-items: flex-end;
@@ -571,6 +571,7 @@ a {
 	border: 0;
 	cursor: pointer;
 	padding: 6px 4px;
+	white-space: nowrap;
 }
 .auth-link:hover {
 	color: var(--ink);
@@ -596,7 +597,7 @@ a {
 	text-transform: capitalize;
 }
 
-/* ---- auth screens (clean default — needs a design pass) ---- */
+/* ---- auth screens (design: docs/designs/login.html, register.html) ---- */
 .auth-page {
 	max-width: 420px;
 	margin: 0 auto;
@@ -687,7 +688,7 @@ a {
 	padding-bottom: var(--sp-8);
 }
 
-/* ---- loans (clean default — needs a design pass) ---- */
+/* ---- loans (design: docs/designs/loans.html) ---- */
 .loans {
 	display: flex;
 	flex-direction: column;
@@ -763,7 +764,7 @@ a {
 	color: var(--ink);
 }
 
-/* ---- recommendations (clean default — needs a design pass) ---- */
+/* ---- recommendations (design: docs/designs/recommend.html) ---- */
 .rec-form {
 	display: flex;
 	flex-direction: column;
@@ -825,7 +826,7 @@ a {
 	box-shadow: var(--shadow);
 }
 
-/* ---- chat (clean default — needs a design pass) ---- */
+/* ---- chat (design: docs/designs/chat-rooms.html, chat-room.html) ---- */
 .room-list {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -948,7 +949,7 @@ a {
 	outline-offset: 1px;
 }
 
-/* ---- IAM v2 (clean default — needs a design pass) ---- */
+/* ---- IAM v2 (design: docs/designs/account.html, admin-users.html) ---- */
 .auth-note {
 	margin-top: var(--sp-4);
 	color: var(--muted);
