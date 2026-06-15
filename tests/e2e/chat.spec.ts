@@ -21,10 +21,11 @@ test("open a room, send a message, and see it broadcast back", async ({ page }) 
 	await expect(page).toHaveURL(/\/chat\/ask-a-librarian$/)
 
 	// the socket connects (status flips to Live)
-	await expect(page.locator(".chat-status")).toHaveText("Live")
+	await expect(page.locator(".chat-status")).toHaveText("Live", { timeout: 15_000 })
 
-	// send a message → the gateway broadcasts it back to us
+	// send a message → the gateway broadcasts it back to us. The WS round-trip can
+	// be slow when the whole E2E suite shares one gateway, so allow extra time.
 	await page.getByLabel("Message").fill(message)
 	await page.getByRole("button", { name: "Send" }).click()
-	await expect(page.getByText(message)).toBeVisible()
+	await expect(page.getByText(message)).toBeVisible({ timeout: 15_000 })
 })
