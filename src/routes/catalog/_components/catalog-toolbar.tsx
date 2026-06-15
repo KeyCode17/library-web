@@ -1,8 +1,8 @@
 import { cn } from "#/libs/clsx/index.ts"
 
 // Quick text-search chips. "All" clears the query; the others set `q` to their
-// label (mapped to GET /books?q=). Labels are the design's clean default — the
-// design pass is a separate task.
+// label (mapped to GET /books?q=). The chip labels are catalogue facets, not a
+// contract enum — they map straight onto the `q` text search.
 const FILTER_CHIPS = ["All", "Available", "Fiction", "Science", "Reference"] as const
 
 interface ICatalogToolbarProps {

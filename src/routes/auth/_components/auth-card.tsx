@@ -8,8 +8,8 @@ interface IAuthCardProps {
 	footer: ReactNode
 }
 
-// Centered card shell for the auth screens. No bespoke login design exists — this
-// is a clean default built on the existing tokens; see README (needs a design pass).
+// Centered card shell for the auth screens, built to the Stacks design tokens
+// (design: docs/designs/login.html, register.html, forgot-password.html, etc.).
 export function AuthCard({ title, subtitle, children, footer }: IAuthCardProps) {
 	return (
 		<main className="auth-page">

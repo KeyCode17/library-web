@@ -1,0 +1,217 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stacks — Recommendations (web design)</title>
+<!-- DESIGN SPEC: honor tokens in :root verbatim from catalog.html and the .book-card / .shelf-tab / .avail / .chip structure exactly. Mirrors recommend-screen.tsx + recommend-form.tsx + recommend-results.tsx + book-card.tsx. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><style>
+/* ============================================================
+   STACKS — design tokens (extract these verbatim)
+   Display: Fraunces | Body: Inter | Mono (call numbers): JetBrains Mono
+   ============================================================ */
+:root{
+  --ink:#20231F;          /* primary text */
+  --muted:#6B6F69;        /* secondary text */
+  --faint:#9A9A93;        /* tertiary / unavailable */
+  --bg:#F7F6F1;           /* page (cool paper, NOT cream) */
+  --surface:#FFFFFF;      /* cards */
+  --line:#E5E3DB;         /* hairline borders */
+  --pine:#2C5949;         /* primary accent */
+  --pine-700:#1F4034;     /* primary pressed */
+  --sage-100:#E6EDE7;     /* available chip bg */
+  --brass:#9A7637;        /* shelf-tab accent */
+  --brass-700:#6F531F;    /* shelf-tab text */
+  --brass-100:#F0E7D4;    /* shelf-tab bg */
+  --radius:10px; --radius-sm:6px; --radius-pill:999px;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-8:48px;
+  --shadow:0 1px 2px rgba(32,35,31,.05),0 4px 16px rgba(32,35,31,.05);
+  --font-display:'Fraunces',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);color:var(--ink);background:var(--bg);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wordmark{font-family:var(--font-display);font-weight:600;font-size:22px;letter-spacing:-.01em}
+.wordmark .dot{color:var(--pine)}
+
+/* ---- book cover (CSS-drawn spine/cover) ---- */
+.cover{aspect-ratio:3/4;border-radius:var(--radius-sm);position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:var(--sp-3);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);}
+.cover::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:rgba(0,0,0,.12)}
+.cover .ct{font-family:var(--font-display);font-weight:600;color:#fff;font-size:14px;line-height:1.2;
+  text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.cover .ca{color:rgba(255,255,255,.85);font-size:11px;margin-top:2px}
+
+/* ---- shelf-location tab (THE signature element) ---- */
+.shelf-tab{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);
+  font-size:11px;font-weight:500;color:var(--brass-700);background:var(--brass-100);
+  border:1px solid color-mix(in srgb,var(--brass) 35%,transparent);
+  padding:3px 8px 3px 7px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  border-left:3px solid var(--brass);letter-spacing:.02em;white-space:nowrap}
+.shelf-tab .sl{color:var(--brass-700);font-weight:500}
+
+/* ---- availability ---- */
+.avail{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;
+  padding:3px 9px;border-radius:var(--radius-pill)}
+.avail.in{color:var(--pine);background:var(--sage-100)}
+.avail.out{color:#555852;background:#EFEEE9}
+.avail .d{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* ---- filter chips ---- */
+.chip{font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+  padding:6px 12px;border-radius:var(--radius-pill);cursor:pointer;font-weight:500}
+.chip.on{color:#fff;background:var(--pine);border-color:var(--pine)}
+
+/* ---- search ---- */
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius-pill);padding:9px 14px;color:var(--muted)}
+.search input{border:0;outline:0;background:none;font:inherit;color:var(--ink);width:100%}
+.search svg{flex:none}
+
+/* ---- buttons ---- */
+.btn{font:inherit;font-weight:500;font-size:14px;padding:10px 18px;border-radius:var(--radius);
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--pine);border-color:var(--pine);color:#fff}
+.btn.primary:hover{background:var(--pine-700)}
+
+.app{max-width:1120px;margin:0 auto;padding:0 var(--sp-5)}
+.appbar{display:flex;align-items:center;gap:var(--sp-5);padding:var(--sp-4) 0;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+.appbar .search{flex:1;max-width:440px}
+.appbar nav{display:flex;gap:var(--sp-4);margin-left:auto;font-size:14px;color:var(--muted);font-weight:500}
+.appbar nav .on{color:var(--ink)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--pine);color:#fff;display:grid;place-items:center;font-weight:600;font-size:13px}
+.head{padding:var(--sp-6) 0 var(--sp-4)}
+.head h1{font-family:var(--font-display);font-weight:600;font-size:34px;letter-spacing:-.02em}
+.head p{color:var(--muted);margin-top:var(--sp-1)}
+.book-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:var(--sp-3);box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s;cursor:pointer}
+.book-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(32,35,31,.10)}
+.book-card .cover{margin-bottom:var(--sp-3)}
+.bc-title{font-family:var(--font-display);font-weight:600;font-size:16px;line-height:1.2}
+.bc-author{color:var(--muted);font-size:13px;margin-top:2px}
+.bc-meta{display:flex;align-items:center;justify-content:space-between;margin-top:var(--sp-3)}
+.call{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.bc-shelf{margin-top:var(--sp-3)}
+
+/* ---- auth menu (app bar corner) ---- */
+.auth-menu{display:flex;align-items:center;gap:var(--sp-3)}
+.auth-link{font:inherit;font-size:14px;font-weight:500;color:var(--muted);background:none;border:0;cursor:pointer;padding:6px 4px}
+.auth-link:hover{color:var(--ink)}
+.auth-id{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
+.auth-email{font-size:13px;font-weight:500;color:var(--ink)}
+.auth-role{font-size:11px;color:var(--muted);text-transform:capitalize}
+.appbar-link{color:var(--muted)}
+.appbar-link:hover{color:var(--ink)}
+
+/* ---- form field (authors text input; from styles.css .form-field) ---- */
+.form-field{display:flex;flex-direction:column;gap:var(--sp-1)}
+.form-field label{font-size:13px;font-weight:500;color:var(--ink)}
+.form-field input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 12px}
+.form-field input:focus{outline:2px solid color-mix(in srgb,var(--pine) 40%,transparent);outline-offset:1px;background:var(--surface)}
+
+/* ---- empty / idle panels ---- */
+.state-panel{display:flex;flex-direction:column;align-items:center;gap:var(--sp-3);text-align:center;padding:var(--sp-8) var(--sp-5);margin-bottom:var(--sp-8)}
+.state-title{font-family:var(--font-display);font-weight:600;font-size:22px;color:var(--ink)}
+.state-body{color:var(--muted);max-width:42ch}
+
+/* ---- recommendations ---- */
+.rec-form{display:flex;flex-direction:column;gap:var(--sp-4);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:var(--sp-5);margin-bottom:var(--sp-6);max-width:640px}
+.rec-field{border:0}
+.rec-legend{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:var(--sp-2)}
+.rec-chips{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+.rec-hint{font-size:13px;color:var(--muted)}
+.rec-check{display:flex;align-items:center;gap:var(--sp-2);font-size:14px}
+.rec-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--sp-5);padding-bottom:var(--sp-8);list-style:none}
+.rec-item{position:relative}
+.rec-rank{position:absolute;z-index:1;top:calc(-1 * var(--sp-2));left:calc(-1 * var(--sp-2));font-family:var(--font-mono);font-size:12px;font-weight:500;color:#fff;background:var(--pine);border-radius:var(--radius-pill);padding:2px 8px;box-shadow:var(--shadow)}
+
+@media(max-width:640px){.appbar nav{display:none}.head h1{font-size:26px}}
+</style></head>
+<body><div class="app">
+  <header class="appbar">
+    <span class="wordmark">Stacks<span class="dot">.</span></span>
+    <search aria-label="Catalogue search"><form class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input type="search" name="q" placeholder="Search title, author, or ISBN" aria-label="Search the catalogue"></form></search>
+    <nav><a href="catalog.html">Catalog</a><span>Borrowed</span><span class="appbar-link" style="color:var(--ink)">Recommend</span></nav>
+    <div class="auth-menu">
+      <a class="auth-link">Chat</a>
+      <a class="auth-link">My loans</a>
+      <div class="auth-id"><span class="auth-email">dana.k@stacks.lib</span><span class="auth-role">member</span></div>
+      <div class="avatar" title="dana.k@stacks.lib">DA</div>
+      <button type="button" class="auth-link">Log out</button>
+    </div>
+  </header>
+  <main>
+    <section class="head"><h1>Recommendations</h1><p>Books ranked for what you like.</p></section>
+
+    <!-- PREFERENCES FORM (recommend-form.tsx): shelf chips toggle (aria-pressed), comma-separated authors text, an "available now only" checkbox, and the primary submit. -->
+    <form class="rec-form">
+      <fieldset class="rec-field">
+        <legend class="rec-legend">Preferred shelves</legend>
+        <div class="rec-chips">
+          <button type="button" aria-pressed="true" class="chip on">Tech</button>
+          <button type="button" aria-pressed="false" class="chip">SciFi</button>
+          <button type="button" aria-pressed="true" class="chip on">Fiction</button>
+          <button type="button" aria-pressed="false" class="chip">Science</button>
+          <button type="button" aria-pressed="false" class="chip">Reference</button>
+        </div>
+      </fieldset>
+
+      <div class="form-field">
+        <label for="authors">Preferred authors</label>
+        <input id="authors" name="authors" type="text" placeholder="comma-separated, e.g. Robert C. Martin" value="Robert C. Martin, Frank Herbert">
+      </div>
+
+      <label class="rec-check">
+        <input type="checkbox" checked>
+        Available now only
+      </label>
+
+      <button type="submit" class="btn primary">Get recommendations</button>
+    </form>
+
+    <!-- SUCCESS STATE (recommend-results.tsx): ranked <ol> of .book-card, each wrapped in .rec-item with a #N .rec-rank pill. Book-card markup mirrors book-card.tsx / catalog.html. -->
+    <ol class="rec-results">
+      <li class="rec-item">
+        <span class="rec-rank">#1</span>
+        <article class="book-card">
+          <div class="cover" style="background:#2C5949"><div class="ct">Clean Code</div><div class="ca">Robert C. Martin</div></div>
+          <div class="bc-body">
+            <h2 class="bc-title">Clean Code</h2>
+            <p class="bc-author">Robert C. Martin</p>
+            <div class="bc-meta"><span class="avail in"><span class="d"></span>Available</span><span class="call">978-0132350884</span></div>
+            <div class="bc-shelf"><span class="shelf-tab"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><span class="sl">Tech</span>·3</span></div>
+          </div>
+        </article>
+      </li>
+      <li class="rec-item">
+        <span class="rec-rank">#2</span>
+        <article class="book-card">
+          <div class="cover" style="background:#6B3B52"><div class="ct">Dune</div><div class="ca">Frank Herbert</div></div>
+          <div class="bc-body">
+            <h2 class="bc-title">Dune</h2>
+            <p class="bc-author">Frank Herbert</p>
+            <div class="bc-meta"><span class="avail in"><span class="d"></span>Available</span><span class="call">978-0441013593</span></div>
+            <div class="bc-shelf"><span class="shelf-tab"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><span class="sl">SciFi</span>·1</span></div>
+          </div>
+        </article>
+      </li>
+      <li class="rec-item">
+        <span class="rec-rank">#3</span>
+        <article class="book-card">
+          <div class="cover" style="background:#3A4A6B"><div class="ct">The Pragmatic Programmer</div><div class="ca">Andrew Hunt &amp; David Thomas</div></div>
+          <div class="bc-body">
+            <h2 class="bc-title">The Pragmatic Programmer</h2>
+            <p class="bc-author">Andrew Hunt &amp; David Thomas</p>
+            <div class="bc-meta"><span class="avail out"><span class="d"></span>Borrowed</span><span class="call">978-0201616224</span></div>
+            <div class="bc-shelf"><span class="shelf-tab"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><span class="sl">Tech</span>·5</span></div>
+          </div>
+        </article>
+      </li>
+    </ol>
+
+    <!-- IDLE STATE: rendered before the first submit (recommend-results.tsx, status "idle"). Shown in place of .rec-results. -->
+    <div class="state-panel">
+      <h2 class="state-title">Tell us what you like</h2>
+      <p class="state-body">Pick shelves or authors, then get a ranked list.</p>
+    </div>
+  </main>
+</div></body></html>

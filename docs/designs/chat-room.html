@@ -1,0 +1,186 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stacks — Chat room (web design)</title>
+<!-- DESIGN SPEC: honor tokens in :root and the .chat-head / .chat-log / .chat-bubble / .chat-composer structure exactly. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><style>
+/* ============================================================
+   STACKS — design tokens (extract these verbatim)
+   Display: Fraunces | Body: Inter | Mono (call numbers): JetBrains Mono
+   ============================================================ */
+:root{
+  --ink:#20231F;          /* primary text */
+  --muted:#6B6F69;        /* secondary text */
+  --faint:#9A9A93;        /* tertiary / unavailable */
+  --bg:#F7F6F1;           /* page (cool paper, NOT cream) */
+  --surface:#FFFFFF;      /* cards */
+  --line:#E5E3DB;         /* hairline borders */
+  --pine:#2C5949;         /* primary accent */
+  --pine-700:#1F4034;     /* primary pressed */
+  --sage-100:#E6EDE7;     /* available chip bg */
+  --brass:#9A7637;        /* shelf-tab accent */
+  --brass-700:#6F531F;    /* shelf-tab text */
+  --brass-100:#F0E7D4;    /* shelf-tab bg */
+  --radius:10px; --radius-sm:6px; --radius-pill:999px;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-8:48px;
+  --shadow:0 1px 2px rgba(32,35,31,.05),0 4px 16px rgba(32,35,31,.05);
+  --font-display:'Fraunces',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);color:var(--ink);background:var(--bg);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wordmark{font-family:var(--font-display);font-weight:600;font-size:22px;letter-spacing:-.01em}
+.wordmark .dot{color:var(--pine)}
+
+/* ---- search ---- */
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius-pill);padding:9px 14px;color:var(--muted)}
+.search input{border:0;outline:0;background:none;font:inherit;color:var(--ink);width:100%}
+.search svg{flex:none}
+
+/* ---- buttons ---- */
+.btn{font:inherit;font-weight:500;font-size:14px;padding:10px 18px;border-radius:var(--radius);
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--pine);border-color:var(--pine);color:#fff}
+.btn.primary:hover{background:var(--pine-700)}
+
+.app{max-width:1120px;margin:0 auto;padding:0 var(--sp-5)}
+.appbar{display:flex;align-items:center;gap:var(--sp-5);padding:var(--sp-4) 0;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+.appbar .search{flex:1;max-width:440px}
+.appbar nav{display:flex;gap:var(--sp-4);margin-left:auto;font-size:14px;color:var(--muted);font-weight:500}
+.appbar nav .on{color:var(--ink)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--pine);color:#fff;display:grid;place-items:center;font-weight:600;font-size:13px}
+.head{padding:var(--sp-6) 0 var(--sp-4)}
+.head h1{font-family:var(--font-display);font-weight:600;font-size:34px;letter-spacing:-.02em}
+.head p{color:var(--muted);margin-top:var(--sp-1)}
+
+/* ---- auth menu (app bar corner) ---- */
+.auth-menu{display:flex;align-items:center;gap:var(--sp-3)}
+.auth-link{font:inherit;font-size:14px;font-weight:500;color:var(--muted);background:none;border:0;cursor:pointer;padding:6px 4px}
+.auth-link:hover{color:var(--ink)}
+.auth-id{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
+.auth-email{font-size:13px;font-weight:500;color:var(--ink)}
+.auth-role{font-size:11px;color:var(--muted);text-transform:capitalize}
+.appbar-link{color:var(--muted)}
+.appbar-link:hover{color:var(--ink)}
+
+/* ---- empty / error panels ---- */
+.state-panel{display:flex;flex-direction:column;align-items:center;gap:var(--sp-3);text-align:center;padding:var(--sp-8) var(--sp-5);margin-bottom:var(--sp-8)}
+.state-title{font-family:var(--font-display);font-weight:600;font-size:22px;color:var(--ink)}
+.state-body{color:var(--muted);max-width:42ch}
+
+/* ---- chat room ---- */
+.chat-head{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-6) 0 var(--sp-4)}
+.chat-head h1{font-family:var(--font-display);font-weight:600;font-size:28px;letter-spacing:-.02em}
+.chat-status{font-size:13px;color:var(--muted)}
+.chat-status[data-status="open"]{color:var(--pine);font-weight:500}
+.chat-status[data-status="error"]{color:#a23b2c}
+.chat{display:flex;flex-direction:column;gap:var(--sp-4);padding-bottom:var(--sp-8)}
+.chat-log{display:flex;flex-direction:column;gap:var(--sp-2);list-style:none}
+.chat-msg{display:flex;justify-content:flex-start}
+.chat-msg--mine{justify-content:flex-end}
+.chat-bubble{max-width:70%;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:var(--sp-2) var(--sp-3)}
+.chat-msg--mine .chat-bubble{background:var(--sage-100);border-color:color-mix(in srgb,var(--pine) 20%,transparent)}
+.chat-author{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.chat-body{margin-top:2px;white-space:pre-wrap;word-break:break-word}
+.chat-time{display:block;margin-top:2px;font-size:11px;color:var(--muted)}
+.chat-composer{display:flex;gap:var(--sp-2);position:sticky;bottom:0;background:var(--bg);padding:var(--sp-3) 0}
+.chat-input{flex:1;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-pill);padding:10px 16px}
+.chat-input:focus{outline:2px solid color-mix(in srgb,var(--pine) 40%,transparent);outline-offset:1px}
+
+@media(max-width:640px){.appbar nav{display:none}.head h1{font-size:26px}}
+</style></head>
+<body><div class="app">
+  <header class="appbar">
+    <span class="wordmark">Stacks<span class="dot">.</span></span>
+    <search aria-label="Catalogue search">
+      <form class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input type="search" name="q" placeholder="Search title, author, or ISBN" aria-label="Search the catalogue">
+      </form>
+    </search>
+    <nav>
+      <span class="on">Catalog</span>
+      <span>Borrowed</span>
+      <a class="appbar-link">Recommend</a>
+    </nav>
+    <div class="auth-menu">
+      <a class="auth-link">Chat</a>
+      <a class="auth-link">My loans</a>
+      <div class="auth-id">
+        <span class="auth-email">d.karyudi@stacks.lib</span>
+        <span class="auth-role">member</span>
+      </div>
+      <div class="avatar" title="d.karyudi@stacks.lib">DK</div>
+      <button type="button" class="auth-link">Log out</button>
+    </div>
+  </header>
+  <main>
+    <section class="chat-head">
+      <div>
+        <h1>Ask a librarian</h1>
+        <p class="chat-status" data-status="open">Live</p>
+      </div>
+      <a class="btn">Leave</a>
+    </section>
+    <div class="chat">
+      <ul class="chat-log">
+        <li class="chat-msg">
+          <div class="chat-bubble">
+            <div class="chat-author">a3f91c8e</div>
+            <div class="chat-body">Hi! Is the reading room open on Sunday afternoons?</div>
+            <time class="chat-time">14:02</time>
+          </div>
+        </li>
+        <li class="chat-msg">
+          <div class="chat-bubble">
+            <div class="chat-author">7b20d4af</div>
+            <div class="chat-body">Yes — Sundays we’re open 12:00 to 17:00. The quiet floor stays open until 18:00.</div>
+            <time class="chat-time">14:05</time>
+          </div>
+        </li>
+        <li class="chat-msg chat-msg--mine">
+          <div class="chat-bubble">
+            <div class="chat-author">You</div>
+            <div class="chat-body">Perfect, thank you. Can I reserve a study desk in advance?</div>
+            <time class="chat-time">14:06</time>
+          </div>
+        </li>
+        <li class="chat-msg">
+          <div class="chat-bubble">
+            <div class="chat-author">7b20d4af</div>
+            <div class="chat-body">Absolutely — desks 1–8 are bookable from your account under “My loans”. Just pick a slot.</div>
+            <time class="chat-time">14:08</time>
+          </div>
+        </li>
+      </ul>
+      <form class="chat-composer">
+        <input class="chat-input" type="text" aria-label="Message" placeholder="Type a message…">
+        <button type="submit" class="btn primary">Send</button>
+      </form>
+    </div>
+
+    <!-- ============================================================
+         EMPTY STATE — shown in place of the .chat-log when a room
+         has no messages yet (messages.length === 0).
+         ============================================================ -->
+    <section class="chat-head">
+      <div>
+        <h1>SciFi readers</h1>
+        <p class="chat-status" data-status="open">Live</p>
+      </div>
+      <a class="btn">Leave</a>
+    </section>
+    <div class="chat">
+      <div class="state-panel">
+        <h2 class="state-title">No messages yet</h2>
+        <p class="state-body">Be the first to say hello.</p>
+      </div>
+      <form class="chat-composer">
+        <input class="chat-input" type="text" aria-label="Message" placeholder="Type a message…">
+        <button type="submit" class="btn primary">Send</button>
+      </form>
+    </div>
+  </main>
+</div></body></html>

@@ -14,8 +14,8 @@ const hasFilter = (finder: TFinder) =>
 	finder.q !== undefined
 
 // Book-finder: narrow the catalogue to an exact shelf and/or row (contract finder
-// params). Minimal by design — `docs/designs/catalog.html` has no finder UI, so
-// this is a clean placeholder pending a design pass (see README).
+// params). Intentionally minimal — `docs/designs/catalog.html` ships no finder UI,
+// so a spare control built on the catalog tokens is the intended design here.
 export function FinderControls({ value, onChange }: IFinderControlsProps) {
 	return (
 		<search className="finder" aria-label="Find a book by shelf location">

@@ -24,31 +24,31 @@ shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004),
   **loading, loaded, not-found (404), and error** states; cards link list → detail
 - **Book-finder**: `shelf` + `row` filters held in the URL search params and passed
   to `GET /books`. The finder UI is intentionally minimal — `catalog.html` ships no
-  finder design, so this is a placeholder **pending a design pass**.
+  finder design, so a spare control on the catalog tokens is its intended form.
 - **IAM auth**: `/auth/login` + `/auth/register` (TanStack Form + Zod), logout, and a
   live session (`GET /auth/me`) surfaced in the app bar. A guarded `/account` route
   (`_authenticated` layout) demonstrates the route guard; **the catalogue stays
   public**. Auth is the **httpOnly `session` cookie** set by the backend — the client
-  sends it via `credentials: "include"` and stores **no JS-readable token**. **The auth
-  screens are a clean default and need a design pass** (no `docs/designs/login.html`).
+  sends it via `credentials: "include"` and stores **no JS-readable token**. The auth
+  screens follow the Stacks design system (`docs/designs/login.html`, `register.html`).
 - **IAM v2** (T-012): an admin-gated **Manage Users** screen (`/admin/users`) — paginated
   list, create, assign role, edit email, deactivate/reactivate, delete (server enforces
   admin + last-admin/lockout, surfaced per row); **account self-service** on `/account` —
   change password, update email, delete account (two-step `<details>` confirm); a
   **forgot → reset** password flow (neutral confirmation, token from the email link) and
   an **email-verification** route plus an **unverified-email banner**. `/auth/me` exposes
-  `verified`/`active`. **No design files for these — clean defaults, need a design pass.**
+  `verified`/`active`. Designs: `docs/designs/account.html`, `admin-users.html`,
+  `forgot-password.html`, `reset-password.html`, `verify-email.html`.
 - **Lending**: a wired **Borrow** on the book detail (`POST /loans`; reflects the
   book going on loan; handles 401 → login prompt and 409 → already-on-loan). A guarded
   `/loans` view (`GET /loans`) lists loans with status + due date and a **Return**
   action; **role-aware** — `librarian`/`admin` see all loans and an **Approve** action,
-  hidden for members (server enforces regardless). **No lending design exists — this is
-  a clean default, needs a design pass.**
+  hidden for members (server enforces regardless). Design: `docs/designs/loans.html`.
 - **Recommendations**: a public `/recommend` view — express `Preferences` (shelf chips,
   authors, available-only) and `POST /recommend` over **REST** (the decision-tree runs
   server-side). The response is ranked **book ids**, resolved against the catalogue and
-  rendered in rank order; states idle/loading/empty/error/loaded. **No recommend design
-  exists — clean default, needs a design pass.** (Android consumes the same recommender
+  rendered in rank order; states idle/loading/empty/error/loaded. Design:
+  `docs/designs/recommend.html`. (Android consumes the same recommender
   via the on-device FFI binding instead — not the web's concern.)
 - **Group chat** (guarded): a room picker (`/chat`) — ask-a-librarian + a room per book
   category — and a room view (`/chat/$room`) that loads REST history
@@ -56,8 +56,8 @@ shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004),
   (`/ws/chat?room=&token=<jwt>`) for live messages; send `ChatSend`, append incoming
   `ChatMessage` broadcasts, with a connection-status indicator. **The socket lifecycle is
   managed outside React** (a TanStack Store service connected/closed from route loaders,
-  subscribed via `useStore`) — no `useEffect`/`useRef`. **No chat design exists — clean
-  default, needs a design pass.**
+  subscribed via `useStore`) — no `useEffect`/`useRef`. Designs:
+  `docs/designs/chat-rooms.html`, `chat-room.html`.
 - Real types generated from the contract (`pnpm gen:api` → `src/libs/api/schema.d.ts`);
   `useListBooks` / `useBook` / `useLogin` / `useRegister` / `useSession` / `useBorrowBook`
   / `useListLoans` / `useReturnLoan` / `useApproveLoan` / `useRecommend` / `useChatHistory`
@@ -80,11 +80,11 @@ shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004),
 - Biome (tabs, double quotes, semicolons as-needed) with the no-React-hooks lint gate
 - Lefthook pre-commit + pre-push hooks (full gate: biome, tsc, contract-drift, vitest, e2e)
 
-> **Design fidelity:** the catalog and book-detail screens still match
-> `docs/designs/*.html` in layout, typography, spacing, and tokens. Two tertiary text
-> colours were darkened for WCAG-AA contrast — the shelf-tab code (→ `--brass-700`) and
-> the "Borrowed" pill (→ a darker grey). The other screens have no design files; their
-> clean defaults stand (and need a design pass).
+> **Design fidelity:** every screen now has a binding mockup in `docs/designs/*.html`
+> and the implementation was sliced from it — layout, typography, spacing, and tokens —
+> then verified screen-by-screen in a real browser (clean console per screen). Two
+> tertiary text colours were darkened for WCAG-AA contrast — the shelf-tab code
+> (→ `--brass-700`) and the "Borrowed" pill (→ a darker grey).
 >
 > **E2E backend:** the gateway now requires Postgres, so the Playwright `webServer`
 > provisions a throwaway, freshly-seeded Postgres in **Docker** (`scripts/start-gateway.sh`)
