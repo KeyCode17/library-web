@@ -32,12 +32,18 @@ export async function login(credentials: TCredentials): Promise<TAuthToken> {
 	return data
 }
 
-// `GET /auth/me` — the current principal. The bearer token is attached by the
-// client middleware; a missing/invalid token yields a 401 (ApiError.status).
+// `GET /auth/me` — the current principal, authenticated by the session cookie. A
+// missing/invalid session yields a 401 (ApiError.status) → "not signed in".
 export async function getCurrentUser(): Promise<TPrincipal> {
 	const { data, error, response } = await api.GET("/auth/me")
 	if (error || !data) throw toApiError(error, response?.status)
 	return data
+}
+
+// `POST /auth/logout` — clears the session cookie (204, no error responses).
+export async function logout(): Promise<void> {
+	const { error } = await api.POST("/auth/logout")
+	if (error) throw new Error(extractErrorMessage(error))
 }
 
 // `POST /auth/change-password` — change own password (204).

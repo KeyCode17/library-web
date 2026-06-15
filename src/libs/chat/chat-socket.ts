@@ -20,15 +20,15 @@ export const chatSocketStore = new Store<IChatSocketState>({
 
 let socket: WebSocket | null = null
 
-function buildUrl(room: string, token: string): string {
-	// The gateway authenticates the upgrade via the `token` query param (browsers
-	// can't set headers on a WS handshake). Vite proxies /api/ws → the gateway.
+function buildUrl(room: string): string {
+	// The gateway authenticates the upgrade via the httpOnly `session` cookie, which
+	// the browser sends automatically on this same-origin WS handshake (no JS token).
+	// Vite proxies /api/ws → the gateway.
 	const protocol = window.location.protocol === "https:" ? "wss:" : "ws:"
-	const query = `room=${encodeURIComponent(room)}&token=${encodeURIComponent(token)}`
-	return `${protocol}//${window.location.host}/api/ws/chat?${query}`
+	return `${protocol}//${window.location.host}/api/ws/chat?room=${encodeURIComponent(room)}`
 }
 
-export function connectChat(room: string, token: string): void {
+export function connectChat(room: string): void {
 	const { room: current, status } = chatSocketStore.state
 	if (socket && current === room && (status === "connecting" || status === "open")) {
 		return
@@ -36,7 +36,7 @@ export function connectChat(room: string, token: string): void {
 	disconnectChat()
 	chatSocketStore.setState(() => ({ room, status: "connecting", messages: [] }))
 
-	const ws = new WebSocket(buildUrl(room, token))
+	const ws = new WebSocket(buildUrl(room))
 	socket = ws
 	ws.onopen = () => chatSocketStore.setState((state) => ({ ...state, status: "open" }))
 	ws.onmessage = (event) => {

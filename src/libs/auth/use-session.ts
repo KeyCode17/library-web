@@ -1,12 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
-import { useStore } from "@tanstack/react-store"
 import { meQueryOptions } from "#/libs/auth/session.ts"
-import { tokenStore } from "#/libs/auth/token-store.ts"
 
-// The current session: resolves the principal via `GET /auth/me`, but only when a
-// token is present (no token → idle, no request). TanStack Query + Store; no React
-// hooks. A 401 (stale/invalid token) surfaces as the query's error.
+// The current session, authenticated by the httpOnly `session` cookie. With cookie
+// auth there is no JS token to gate on, so this always asks `GET /auth/me`:
+// `data` → signed in; a 401 error → anonymous. TanStack Query; no React hooks.
 export function useSession() {
-	const token = useStore(tokenStore, (state) => state.token)
-	return useQuery({ ...meQueryOptions, enabled: token !== null })
+	return useQuery(meQueryOptions)
 }
