@@ -1,6 +1,6 @@
 # library-web
 
-TanStack SPA frontend for the Library project. **v1.1.0 — IAM v2: admin Manage Users, account self-service, and password-reset/email-verification flows.** Full feature set (catalog, auth, lending, recommendations, chat), a11y + perf hardened, contract-typed against the backend.
+TanStack SPA frontend for the Library project. **v1.2.0 — completeness: httpOnly-cookie auth (no localStorage), `?q=` search wired, dead UI removed, and a design pass over every screen.** Full feature set (catalog, auth, lending, recommendations, chat), a11y + perf hardened, contract-typed against the backend.
 
 > **Deployment:** the SPA proxies `/api` to the backend gateway, which now requires
 > `DATABASE_URL` (Postgres), `IAM_JWT_SECRET`, and FCM config to be set in real
