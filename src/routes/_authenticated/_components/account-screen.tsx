@@ -1,10 +1,14 @@
+import { Link } from "@tanstack/react-router"
 import { match } from "ts-pattern"
 import { PageShell } from "#/components/layout/page-shell.tsx"
 import { useSession } from "#/libs/auth/use-session.ts"
 import { extractErrorMessage } from "#/libs/errors/index.ts"
+import { ChangePasswordForm } from "./change-password-form.tsx"
+import { DeleteAccount } from "./delete-account.tsx"
+import { UpdateEmailForm } from "./update-email-form.tsx"
 
 // The authenticated-only account page. Reaching it proves the route guard; the
-// content reads the live principal from `GET /auth/me`.
+// content reads the live principal from `GET /auth/me` and offers self-service.
 export function AccountScreen() {
 	const session = useSession()
 
@@ -27,20 +31,34 @@ export function AccountScreen() {
 					</div>
 				))
 				.with({ status: "success" }, ({ data }) => (
-					<dl className="facts account-facts">
-						<div className="fact">
-							<dt className="k">Email</dt>
-							<dd className="v">{data.email}</dd>
-						</div>
-						<div className="fact">
-							<dt className="k">Role</dt>
-							<dd className="v">{data.role}</dd>
-						</div>
-						<div className="fact">
-							<dt className="k">User id</dt>
-							<dd className="v mono">{data.id}</dd>
-						</div>
-					</dl>
+					<div className="account">
+						<dl className="facts account-facts">
+							<div className="fact">
+								<dt className="k">Email</dt>
+								<dd className="v">{data.email}</dd>
+							</div>
+							<div className="fact">
+								<dt className="k">Role</dt>
+								<dd className="v">{data.role}</dd>
+							</div>
+							<div className="fact">
+								<dt className="k">Email verified</dt>
+								<dd className="v">{data.verified ? "Yes" : "No"}</dd>
+							</div>
+							<div className="fact">
+								<dt className="k">User id</dt>
+								<dd className="v mono">{data.id}</dd>
+							</div>
+						</dl>
+						{data.role === "admin" && (
+							<Link to="/admin/users" className="btn primary account-admin-link">
+								Manage users
+							</Link>
+						)}
+						<UpdateEmailForm currentEmail={data.email} />
+						<ChangePasswordForm />
+						<DeleteAccount />
+					</div>
 				))
 				.exhaustive()}
 		</PageShell>

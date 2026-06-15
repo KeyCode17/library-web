@@ -14,12 +14,16 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as RecommendIndexRouteImport } from './routes/recommend/index'
 import { Route as CatalogIndexRouteImport } from './routes/catalog/index'
 import { Route as BooksIdRouteImport } from './routes/books/$id'
+import { Route as AuthVerifyEmailRouteImport } from './routes/auth/verify-email'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedLoansIndexRouteImport } from './routes/_authenticated/loans/index'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat/index'
 import { Route as AuthenticatedChatRoomRouteImport } from './routes/_authenticated/chat/$room'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -45,6 +49,16 @@ const BooksIdRoute = BooksIdRouteImport.update({
   path: '/books/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
+  id: '/auth/verify-email',
+  path: '/auth/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/auth/reset-password',
+  path: '/auth/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/auth/register',
   path: '/auth/register',
@@ -53,6 +67,11 @@ const AuthRegisterRoute = AuthRegisterRouteImport.update({
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
@@ -75,15 +94,24 @@ const AuthenticatedChatRoomRoute = AuthenticatedChatRoomRouteImport.update({
   path: '/chat/$room',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AuthenticatedAccountRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/books/$id': typeof BooksIdRoute
   '/catalog/': typeof CatalogIndexRoute
   '/recommend/': typeof RecommendIndexRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/chat/$room': typeof AuthenticatedChatRoomRoute
   '/chat/': typeof AuthenticatedChatIndexRoute
   '/loans/': typeof AuthenticatedLoansIndexRoute
@@ -91,11 +119,15 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AuthenticatedAccountRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/books/$id': typeof BooksIdRoute
   '/catalog': typeof CatalogIndexRoute
   '/recommend': typeof RecommendIndexRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/chat/$room': typeof AuthenticatedChatRoomRoute
   '/chat': typeof AuthenticatedChatIndexRoute
   '/loans': typeof AuthenticatedLoansIndexRoute
@@ -105,11 +137,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_authenticated/account': typeof AuthenticatedAccountRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/books/$id': typeof BooksIdRoute
   '/catalog/': typeof CatalogIndexRoute
   '/recommend/': typeof RecommendIndexRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/chat/$room': typeof AuthenticatedChatRoomRoute
   '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
   '/_authenticated/loans/': typeof AuthenticatedLoansIndexRoute
@@ -119,11 +155,15 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/account'
+    | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/reset-password'
+    | '/auth/verify-email'
     | '/books/$id'
     | '/catalog/'
     | '/recommend/'
+    | '/admin/users'
     | '/chat/$room'
     | '/chat/'
     | '/loans/'
@@ -131,11 +171,15 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account'
+    | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/reset-password'
+    | '/auth/verify-email'
     | '/books/$id'
     | '/catalog'
     | '/recommend'
+    | '/admin/users'
     | '/chat/$room'
     | '/chat'
     | '/loans'
@@ -144,11 +188,15 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/_authenticated/account'
+    | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/reset-password'
+    | '/auth/verify-email'
     | '/books/$id'
     | '/catalog/'
     | '/recommend/'
+    | '/_authenticated/admin/users'
     | '/_authenticated/chat/$room'
     | '/_authenticated/chat/'
     | '/_authenticated/loans/'
@@ -157,8 +205,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
   BooksIdRoute: typeof BooksIdRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
   RecommendIndexRoute: typeof RecommendIndexRoute
@@ -201,6 +252,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BooksIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/verify-email': {
+      id: '/auth/verify-email'
+      path: '/auth/verify-email'
+      fullPath: '/auth/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/auth/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/register': {
       id: '/auth/register'
       path: '/auth/register'
@@ -213,6 +278,13 @@ declare module '@tanstack/react-router' {
       path: '/auth/login'
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/account': {
@@ -243,11 +315,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChatRoomRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedChatRoomRoute: typeof AuthenticatedChatRoomRoute
   AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
   AuthenticatedLoansIndexRoute: typeof AuthenticatedLoansIndexRoute
@@ -255,6 +335,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedChatRoomRoute: AuthenticatedChatRoomRoute,
   AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
   AuthenticatedLoansIndexRoute: AuthenticatedLoansIndexRoute,
@@ -267,8 +348,11 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
+  AuthVerifyEmailRoute: AuthVerifyEmailRoute,
   BooksIdRoute: BooksIdRoute,
   CatalogIndexRoute: CatalogIndexRoute,
   RecommendIndexRoute: RecommendIndexRoute,

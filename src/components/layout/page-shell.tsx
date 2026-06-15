@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { AppBar } from "./app-bar.tsx"
+import { UnverifiedBanner } from "./unverified-banner.tsx"
 
 interface IPageShellProps {
 	children: ReactNode
@@ -7,12 +8,14 @@ interface IPageShellProps {
 	showNav?: boolean
 }
 
-// Standard page frame: the app-bar banner plus a single `<main>` landmark holding
-// the screen content (so all content is contained by landmarks — a11y).
+// Standard page frame: the app-bar banner, an unverified-email notice (when
+// relevant), plus a single `<main>` landmark holding the screen content (so all
+// content is contained by landmarks — a11y).
 export function PageShell({ children, showNav }: IPageShellProps) {
 	return (
 		<div className="app">
 			<AppBar showNav={showNav} />
+			<UnverifiedBanner />
 			<main>{children}</main>
 		</div>
 	)
