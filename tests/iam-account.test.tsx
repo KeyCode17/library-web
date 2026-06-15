@@ -1,7 +1,6 @@
 import { fireEvent, screen, within } from "@testing-library/react"
 import { HttpResponse, http } from "msw"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { clearToken, setToken } from "#/libs/auth/token-store.ts"
+import { describe, expect, it } from "vitest"
 import { server } from "./mocks/server.ts"
 import { renderRoute } from "./utils.tsx"
 
@@ -14,9 +13,6 @@ const ME = {
 }
 
 const CHANGE_PW_URL = "*/api/auth/change-password"
-
-beforeEach(() => setToken("jwt"))
-afterEach(() => clearToken())
 
 async function changePasswordSection() {
 	const heading = await screen.findByRole("heading", { name: "Change password" })

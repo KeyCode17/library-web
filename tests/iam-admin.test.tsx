@@ -1,7 +1,6 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react"
 import { HttpResponse, http } from "msw"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { clearToken, setToken } from "#/libs/auth/token-store.ts"
+import { beforeEach, describe, expect, it } from "vitest"
 import { server } from "./mocks/server.ts"
 import { makeUser, makeUserList } from "./mocks/users.ts"
 import { renderRoute } from "./utils.tsx"
@@ -55,9 +54,7 @@ function userHandlers() {
 beforeEach(() => {
 	users = [ADMIN, MEMBER]
 	lastRoleAssign = null
-	setToken("jwt")
 })
-afterEach(() => clearToken())
 
 describe("admin manage users", () => {
 	it("redirects a non-admin away from the screen", async () => {

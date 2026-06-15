@@ -1,10 +1,10 @@
 import createClient from "openapi-fetch"
-import { getToken } from "#/libs/auth/token-store.ts"
 import type { paths } from "./schema"
 
-// Single cookie-credentialed client, typed against the generated OpenAPI `paths`.
-// Feature `_apis/` modules wrap endpoints over this — they are plain functions,
-// never hooks. See the tanstack-frontend skill §3.
+// Single client, typed against the generated OpenAPI `paths`. Auth is the httpOnly
+// `session` cookie set by the backend on login — `credentials: "include"` sends it
+// automatically. There is no JS-readable token (XSS-exposed localStorage removed).
+// Feature `_apis/` modules wrap endpoints over this — plain functions, never hooks.
 //
 // `baseUrl` is "/api" in the browser (Vite proxies /api → the gateway, stripping
 // the prefix). Tests set VITE_API_BASE_URL to an absolute origin so Node's fetch
@@ -15,13 +15,4 @@ export const api = createClient<paths>({
 	// Resolve `globalThis.fetch` per call rather than capturing it at creation,
 	// so test interceptors (MSW) installed after this module loads are honoured.
 	fetch: (request: Request) => globalThis.fetch(request),
-})
-
-// Attach the bearer token (read live from the token store) to every request.
-api.use({
-	onRequest({ request }) {
-		const token = getToken()
-		if (token) request.headers.set("Authorization", `Bearer ${token}`)
-		return request
-	},
 })

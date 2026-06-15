@@ -3,7 +3,6 @@ import { HttpResponse, http } from "msw"
 import { describe, expect, it } from "vitest"
 import { axe } from "vitest-axe"
 import * as axeMatchers from "vitest-axe/matchers"
-import { setToken } from "#/libs/auth/token-store.ts"
 import { makeBook, makeBookList } from "./mocks/books.ts"
 import { makeLoan, makeLoanList } from "./mocks/loans.ts"
 import { server } from "./mocks/server.ts"
@@ -70,7 +69,6 @@ describe("accessibility (axe)", () => {
 	})
 
 	it("account screen has no violations", async () => {
-		setToken("jwt")
 		server.use(meHandler())
 		renderRoute("/account")
 		await screen.findByRole("heading", { level: 1, name: "Account" })
@@ -78,7 +76,6 @@ describe("accessibility (axe)", () => {
 	})
 
 	it("loans screen has no violations", async () => {
-		setToken("jwt")
 		server.use(
 			http.get("*/api/loans", () =>
 				HttpResponse.json(makeLoanList([makeLoan({ book_id: BOOK_ID, status: "borrowed" })])),
@@ -99,7 +96,6 @@ describe("accessibility (axe)", () => {
 	})
 
 	it("chat room picker has no violations", async () => {
-		setToken("jwt")
 		server.use(booksHandler(), meHandler())
 		renderRoute("/chat")
 		await screen.findByRole("heading", { level: 1, name: "Chat rooms" })

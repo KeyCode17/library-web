@@ -28,9 +28,9 @@ shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004),
 - **IAM auth**: `/auth/login` + `/auth/register` (TanStack Form + Zod), logout, and a
   live session (`GET /auth/me`) surfaced in the app bar. A guarded `/account` route
   (`_authenticated` layout) demonstrates the route guard; **the catalogue stays
-  public**. The bearer token is attached to every request via openapi-fetch
-  middleware. **The auth screens are a clean default and need a design pass** (no
-  `docs/designs/login.html` exists).
+  public**. Auth is the **httpOnly `session` cookie** set by the backend — the client
+  sends it via `credentials: "include"` and stores **no JS-readable token**. **The auth
+  screens are a clean default and need a design pass** (no `docs/designs/login.html`).
 - **IAM v2** (T-012): an admin-gated **Manage Users** screen (`/admin/users`) — paginated
   list, create, assign role, edit email, deactivate/reactivate, delete (server enforces
   admin + last-admin/lockout, surfaced per row); **account self-service** on `/account` —
@@ -90,16 +90,14 @@ shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004),
 > provisions a throwaway, freshly-seeded Postgres in **Docker** (`scripts/start-gateway.sh`)
 > and the gateway auto-migrates/seeds it. Running E2E needs Docker available.
 >
-> **Token storage:** the JWT is kept in `localStorage` so the session survives reload
-> (acceptable for this SPA, but XSS-exposed). Planned hardening: an httpOnly,
-> SameSite cookie issued by the backend.
+> **Auth / session:** the JWT lives in an **httpOnly, SameSite=Lax `session` cookie**
+> set by the backend on login and cleared by `POST /auth/logout` — there is no
+> JS-readable token (the earlier localStorage/XSS exposure is resolved). The chat
+> WebSocket authenticates with the same cookie (sent on the same-origin handshake).
 >
-> **Deferred:** admin role assignment (`POST /users/{id}/roles`) is M4 (admin/RBAC)
-> per the plan — deferred, not built.
->
-> **Presentational, not yet wired:** the detail **Reserve** action, the appbar search,
-> and the list filter chips render for design fidelity but have no contract backing
-> (no reserve endpoint; search/category filters aren't in the contract).
+> **Presentational:** the app-bar "Borrowed" nav item is still a static placeholder
+> (no dedicated screen yet). Everything else is wired — the app-bar search and the
+> filter chips drive `GET /books?q=`, and the dead "Reserve" detail action was removed.
 
 ## Stack
 

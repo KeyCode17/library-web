@@ -1,7 +1,6 @@
 import { fireEvent, screen } from "@testing-library/react"
 import { HttpResponse, http } from "msw"
 import { describe, expect, it } from "vitest"
-import { setToken } from "#/libs/auth/token-store.ts"
 import { makeBookList } from "./mocks/books.ts"
 import { server } from "./mocks/server.ts"
 import { renderRoute } from "./utils.tsx"
@@ -9,6 +8,7 @@ import { renderRoute } from "./utils.tsx"
 const LOGIN_URL = "*/api/auth/login"
 const REGISTER_URL = "*/api/auth/register"
 const ME_URL = "*/api/auth/me"
+const LOGOUT_URL = "*/api/auth/logout"
 const BOOKS_URL = "*/api/books"
 
 const EMAIL = "reader@example.com"
@@ -34,16 +34,13 @@ describe("auth", () => {
 		expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument()
 	})
 
-	it("logs in, attaches the bearer token, and reaches the account page", async () => {
-		let seenAuth: string | null = null
+	it("logs in via the session cookie and reaches the account page", async () => {
+		// The backend sets the session cookie; the client stores no JS token.
 		server.use(
 			http.post(LOGIN_URL, () =>
-				HttpResponse.json({ token: "test-jwt", token_type: "Bearer", expires_in: 3600 }),
+				HttpResponse.json({ token: "ignored", token_type: "Bearer", expires_in: 3600 }),
 			),
-			http.get(ME_URL, ({ request }) => {
-				seenAuth = request.headers.get("authorization")
-				return HttpResponse.json(principal)
-			}),
+			http.get(ME_URL, () => HttpResponse.json(principal)),
 		)
 
 		renderRoute("/auth/login")
@@ -54,7 +51,6 @@ describe("auth", () => {
 		// navigated to the guarded account page, which renders the live principal
 		expect(await screen.findByRole("heading", { level: 1, name: "Account" })).toBeInTheDocument()
 		expect((await screen.findAllByText(EMAIL)).length).toBeGreaterThanOrEqual(1)
-		expect(seenAuth).toBe("Bearer test-jwt")
 	})
 
 	it("shows an error on invalid credentials (401)", async () => {
@@ -96,9 +92,18 @@ describe("auth", () => {
 	})
 
 	it("logs out back to the anonymous state", async () => {
-		setToken("test-jwt")
+		// `GET /auth/me` reflects the cookie: authenticated until logout clears it.
+		let signedIn = true
 		server.use(
-			http.get(ME_URL, () => HttpResponse.json(principal)),
+			http.get(ME_URL, () =>
+				signedIn
+					? HttpResponse.json(principal)
+					: HttpResponse.json({ code: "unauthorized", message: "out" }, { status: 401 }),
+			),
+			http.post(LOGOUT_URL, () => {
+				signedIn = false
+				return new HttpResponse(null, { status: 204 })
+			}),
 			http.get(BOOKS_URL, () => HttpResponse.json(makeBookList([]))),
 		)
 

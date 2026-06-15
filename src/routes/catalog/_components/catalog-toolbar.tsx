@@ -1,14 +1,20 @@
+import { cn } from "#/libs/clsx/index.ts"
+
+// Quick text-search chips. "All" clears the query; the others set `q` to their
+// label (mapped to GET /books?q=). Labels are the design's clean default — the
+// design pass is a separate task.
 const FILTER_CHIPS = ["All", "Available", "Fiction", "Science", "Reference"] as const
 
 interface ICatalogToolbarProps {
 	// Total across all pages, shown as the count. Undefined while not yet loaded.
 	total?: number
+	// The active text query (drives chip selection).
+	q?: string
+	onSelectChip: (q: string | undefined) => void
 }
 
-// Page heading + filter row (design `.head` + `.filters`). The chips are
-// presentational for T-001 (no filter params in the contract); only the count
-// is data-bound.
-export function CatalogToolbar({ total }: ICatalogToolbarProps) {
+// Page heading + filter row (design `.head` + `.filters`).
+export function CatalogToolbar({ total, q, onSelectChip }: ICatalogToolbarProps) {
 	return (
 		<>
 			<section className="head">
@@ -16,11 +22,21 @@ export function CatalogToolbar({ total }: ICatalogToolbarProps) {
 				<p>Browse the collection and find any book on the shelf.</p>
 			</section>
 			<div className="filters">
-				{FILTER_CHIPS.map((label, index) => (
-					<button key={label} type="button" className={index === 0 ? "chip on" : "chip"}>
-						{label}
-					</button>
-				))}
+				{FILTER_CHIPS.map((label) => {
+					const isAll = label === "All"
+					const active = isAll ? q === undefined : q === label
+					return (
+						<button
+							key={label}
+							type="button"
+							aria-pressed={active}
+							className={cn("chip", active && "on")}
+							onClick={() => onSelectChip(isAll ? undefined : label)}
+						>
+							{label}
+						</button>
+					)
+				})}
 				<span className="sp" />
 				{total !== undefined && (
 					<span className="count">

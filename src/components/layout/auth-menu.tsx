@@ -1,18 +1,22 @@
 import { Link, useNavigate } from "@tanstack/react-router"
-import { useStore } from "@tanstack/react-store"
-import { tokenStore } from "#/libs/auth/token-store.ts"
 import { useLogout } from "#/libs/auth/use-logout.ts"
 import { useSession } from "#/libs/auth/use-session.ts"
 
-// Auth-aware corner of the app bar: anonymous → login/register links;
-// authenticated → email + role, avatar, and logout.
+// Auth-aware corner of the app bar. Sign-in state comes from the session cookie
+// via `GET /auth/me` (no JS token): a principal → signed in; otherwise anonymous.
 export function AuthMenu() {
-	const token = useStore(tokenStore, (state) => state.token)
 	const session = useSession()
 	const logout = useLogout()
 	const navigate = useNavigate()
 
-	if (token === null) {
+	// While the first /auth/me is in flight, render an empty slot to avoid a flash
+	// of the anonymous links for an already-signed-in user.
+	if (session.isPending) {
+		return <div className="auth-menu" />
+	}
+
+	const principal = session.data
+	if (!principal) {
 		return (
 			<div className="auth-menu">
 				<Link to="/auth/login" className="auth-link">
@@ -25,12 +29,11 @@ export function AuthMenu() {
 		)
 	}
 
-	const principal = session.data
-	const initials = principal ? principal.email.slice(0, 2).toUpperCase() : "··"
+	const initials = principal.email.slice(0, 2).toUpperCase()
 
 	return (
 		<div className="auth-menu">
-			{principal?.role === "admin" && (
+			{principal.role === "admin" && (
 				<Link to="/admin/users" className="auth-link">
 					Manage users
 				</Link>
@@ -41,21 +44,20 @@ export function AuthMenu() {
 			<Link to="/loans" className="auth-link">
 				My loans
 			</Link>
-			{principal && (
-				<div className="auth-id">
-					<span className="auth-email">{principal.email}</span>
-					<span className="auth-role">{principal.role}</span>
-				</div>
-			)}
-			<div className="avatar" title={principal?.email}>
+			<div className="auth-id">
+				<span className="auth-email">{principal.email}</span>
+				<span className="auth-role">{principal.role}</span>
+			</div>
+			<div className="avatar" title={principal.email}>
 				{initials}
 			</div>
 			<button
 				type="button"
 				className="auth-link"
 				onClick={() => {
-					logout()
-					navigate({ to: "/catalog" })
+					logout.mutate(undefined, {
+						onSuccess: () => navigate({ to: "/catalog" }),
+					})
 				}}
 			>
 				Log out

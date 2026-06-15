@@ -1,13 +1,15 @@
-import { useQueryClient } from "@tanstack/react-query"
-import { authKeys } from "#/libs/api/auth.ts"
-import { clearToken } from "#/libs/auth/token-store.ts"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { authKeys, logout } from "#/libs/api/auth.ts"
 
-// Logout is purely client-side: drop the token (→ the session query disables) and
-// evict cached principal data. Returns a plain handler (no React hooks).
+// `POST /auth/logout` clears the session cookie server-side; then drop cached
+// principal data so the UI returns to the anonymous state. Returns a mutation.
 export function useLogout() {
 	const queryClient = useQueryClient()
-	return () => {
-		clearToken()
-		queryClient.removeQueries({ queryKey: authKeys.all })
-	}
+	return useMutation({
+		mutationKey: ["logout"],
+		mutationFn: () => logout(),
+		onSuccess: () => {
+			queryClient.removeQueries({ queryKey: authKeys.all })
+		},
+	})
 }
