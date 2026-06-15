@@ -20,7 +20,11 @@ export function CatalogScreen({ finder = {}, onFinderChange }: ICatalogScreenPro
 
 	return (
 		<PageShell>
-			<CatalogToolbar total={query.data?.pagination.total} />
+			<CatalogToolbar
+				total={query.data?.pagination.total}
+				q={finder.q}
+				onSelectChip={(q) => onFinderChange?.({ ...finder, q })}
+			/>
 			<FinderControls value={finder} onChange={(next) => onFinderChange?.(next)} />
 			{match(query)
 				.with({ status: "pending" }, () => <CatalogLoading />)

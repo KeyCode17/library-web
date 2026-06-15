@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { cn } from "#/libs/clsx/index.ts"
 import { AuthMenu } from "./auth-menu.tsx"
 
@@ -8,36 +8,48 @@ interface IAppBarProps {
 }
 
 // Application bar (design `.appbar`): wordmark, search, optional nav, auth menu.
-//
-// Search and the secondary nav items (Borrowed, Chat) are presentational — the
-// contract exposes neither search nor those screens yet, so they are rendered for
-// design fidelity without faking behaviour. The auth menu (sign-in state) is live.
+// The search submits to the catalogue (`GET /books?q=`); the auth menu reflects
+// the live cookie session. The secondary nav item "Borrowed" stays presentational.
 export function AppBar({ showNav = true }: IAppBarProps) {
+	const navigate = useNavigate()
 	return (
 		<header className={cn("appbar", !showNav && "appbar--bare")}>
 			<span className="wordmark">
 				Stacks<span className="dot">.</span>
 			</span>
-			<label className="search">
-				<svg
-					width="16"
-					height="16"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="2"
-					strokeLinecap="round"
-					aria-hidden="true"
+			<search aria-label="Catalogue search">
+				<form
+					className="search"
+					onSubmit={(event) => {
+						event.preventDefault()
+						const q = new FormData(event.currentTarget).get("q")
+						navigate({
+							to: "/catalog",
+							search: { q: typeof q === "string" && q !== "" ? q : undefined },
+						})
+					}}
 				>
-					<circle cx="11" cy="11" r="7" />
-					<path d="M21 21l-4-4" />
-				</svg>
-				<input
-					type="search"
-					placeholder="Search title, author, or call number"
-					aria-label="Search the catalogue"
-				/>
-			</label>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="2"
+						strokeLinecap="round"
+						aria-hidden="true"
+					>
+						<circle cx="11" cy="11" r="7" />
+						<path d="M21 21l-4-4" />
+					</svg>
+					<input
+						type="search"
+						name="q"
+						placeholder="Search title, author, or ISBN"
+						aria-label="Search the catalogue"
+					/>
+				</form>
+			</search>
 			{showNav && (
 				<nav>
 					<span className="on">Catalog</span>

@@ -44,13 +44,10 @@ export function BookDetail({ book }: IBookDetailProps) {
 							<ShelfTab shelf={book.shelf} row={book.row} />
 						</div>
 					</div>
-					{/* Borrow is wired to POST /loans; Reserve stays presentational
-					    (no reserve endpoint in the contract). */}
+					{/* Borrow is wired to POST /loans. There is no reserve feature, so no
+					    Reserve control. */}
 					<div className="actions">
 						<BorrowButton book={book} />
-						<button type="button" className="btn">
-							Reserve
-						</button>
 					</div>
 					<dl className="facts">
 						<div className="fact">

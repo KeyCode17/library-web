@@ -1,6 +1,6 @@
 import type { TListBooksParams } from "#/routes/catalog/_apis/index.ts"
 
-export type TFinder = Pick<TListBooksParams, "shelf" | "row" | "isbn">
+export type TFinder = Pick<TListBooksParams, "shelf" | "row" | "isbn" | "q">
 
 interface IFinderControlsProps {
 	value: TFinder
@@ -8,7 +8,10 @@ interface IFinderControlsProps {
 }
 
 const hasFilter = (finder: TFinder) =>
-	finder.shelf !== undefined || finder.row !== undefined || finder.isbn !== undefined
+	finder.shelf !== undefined ||
+	finder.row !== undefined ||
+	finder.isbn !== undefined ||
+	finder.q !== undefined
 
 // Book-finder: narrow the catalogue to an exact shelf and/or row (contract finder
 // params). Minimal by design — `docs/designs/catalog.html` has no finder UI, so
