@@ -5,3 +5,5 @@ import type { TRole } from "#/libs/api/auth.ts"
 export function isStaff(role: TRole | undefined): boolean {
 	return role === "admin" || role === "librarian"
 }
+
+export const ALL_ROLES: TRole[] = ["admin", "librarian", "member"]

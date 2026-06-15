@@ -31,6 +31,13 @@ shelf/row finder** (T-002), **IAM auth** (T-003), **lending** (T-004),
   public**. The bearer token is attached to every request via openapi-fetch
   middleware. **The auth screens are a clean default and need a design pass** (no
   `docs/designs/login.html` exists).
+- **IAM v2** (T-012): an admin-gated **Manage Users** screen (`/admin/users`) — paginated
+  list, create, assign role, edit email, deactivate/reactivate, delete (server enforces
+  admin + last-admin/lockout, surfaced per row); **account self-service** on `/account` —
+  change password, update email, delete account (two-step `<details>` confirm); a
+  **forgot → reset** password flow (neutral confirmation, token from the email link) and
+  an **email-verification** route plus an **unverified-email banner**. `/auth/me` exposes
+  `verified`/`active`. **No design files for these — clean defaults, need a design pass.**
 - **Lending**: a wired **Borrow** on the book detail (`POST /loans`; reflects the
   book going on loan; handles 401 → login prompt and 409 → already-on-loan). A guarded
   `/loans` view (`GET /loans`) lists loans with status + due date and a **Return**

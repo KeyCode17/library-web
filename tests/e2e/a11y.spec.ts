@@ -31,6 +31,30 @@ test("anonymous screens have no a11y violations", async ({ page }) => {
 	await page.goto("/recommend")
 	await expect(page.getByRole("heading", { level: 1, name: "Recommendations" })).toBeVisible()
 	await expectNoViolations(page)
+
+	await page.goto("/auth/forgot-password")
+	await expect(page.getByRole("heading", { name: "Forgot password" })).toBeVisible()
+	await expectNoViolations(page)
+
+	await page.goto("/auth/reset-password?token=demo")
+	await expect(page.getByRole("heading", { name: "Reset password" })).toBeVisible()
+	await expectNoViolations(page)
+
+	await page.goto("/auth/verify-email?token=demo-invalid")
+	await expect(page.getByRole("heading", { name: /link expired|email verified/i })).toBeVisible()
+	await expectNoViolations(page)
+})
+
+test("admin manage-users screen has no a11y violations", async ({ page }) => {
+	await page.goto("/auth/login")
+	await page.getByLabel("Email").fill("admin@library.local")
+	await page.getByLabel("Password").fill("admin-password-123")
+	await page.getByRole("button", { name: /sign in/i }).click()
+	await expect(page).toHaveURL(/\/account$/)
+
+	await page.goto("/admin/users")
+	await expect(page.getByRole("heading", { level: 1, name: "Manage users" })).toBeVisible()
+	await expectNoViolations(page)
 })
 
 test("authenticated screens have no a11y violations", async ({ page }) => {

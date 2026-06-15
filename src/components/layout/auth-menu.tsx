@@ -30,6 +30,11 @@ export function AuthMenu() {
 
 	return (
 		<div className="auth-menu">
+			{principal?.role === "admin" && (
+				<Link to="/admin/users" className="auth-link">
+					Manage users
+				</Link>
+			)}
 			<Link to="/chat" className="auth-link">
 				Chat
 			</Link>

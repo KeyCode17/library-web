@@ -19,7 +19,7 @@ docker run -d --name "$NAME" \
 i=0
 while [ "$i" -lt 60 ]; do
 	if docker exec "$NAME" pg_isready -U postgres >/dev/null 2>&1; then
-		sleep 1
+		sleep 2
 		if docker exec "$NAME" psql -U postgres -d postgres -tAc 'select 1' >/dev/null 2>&1; then
 			break
 		fi
@@ -29,5 +29,10 @@ while [ "$i" -lt 60 ]; do
 done
 
 cd "$BACKEND"
-[ -x target/debug/gateway ] || cargo build -p gateway
-DATABASE_URL="postgres://postgres:postgres@localhost:$PG_PORT/postgres" exec target/debug/gateway
+# Build the current gateway (incremental — fast if unchanged) so E2E always runs
+# against the latest backend source.
+cargo build -p gateway
+# Seed a known admin password so the E2E can log in as admin.
+DATABASE_URL="postgres://postgres:postgres@localhost:$PG_PORT/postgres" \
+	IAM_ADMIN_PASSWORD="admin-password-123" \
+	exec target/debug/gateway
